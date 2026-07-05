@@ -13,7 +13,7 @@
   <link rel="manifest" href="./manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="登記預填助手">
+  <meta name="apple-mobile-web-app-title" content="四維親子館">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
   
   <!-- Google Fonts -->
@@ -87,131 +87,6 @@
             <div class="icon">👵‍👦</div>
             <div class="label">長輩/其他帶</div>
             <div class="sublabel">祖父母或親屬</div>
-          </button>
-          
-        </div>
-      </section>
-
-      <!-- Quick Tweak Accordion -->
-      <section class="card">
-        <div class="tweak-header" id="tweakToggle">
-          <div class="section-title" style="margin-bottom: 0;">
-            <span>🔧</span> 自訂本次入館人數
-          </div>
-          <span class="arrow">▼</span>
-        </div>
-        
-        <div class="tweak-content" id="tweakContent">
-          
-          <!-- Adults tweak -->
-          <div class="tweak-row">
-            <div class="tweak-label">
-              男性家長/陪同者 <span>(國小含以上)</span>
-            </div>
-            <div class="counter-control">
-              <button class="btn-counter" onclick="adjustCounter('adultMale', -1)">-</button>
-              <div class="counter-value" id="counter_adultMale">0</div>
-              <button class="btn-counter" onclick="adjustCounter('adultMale', 1)">+</button>
-            </div>
-          </div>
-          
-          <div class="tweak-row">
-            <div class="tweak-label">
-              女性家長/陪同者 <span>(國小含以上)</span>
-            </div>
-            <div class="counter-control">
-              <button class="btn-counter" onclick="adjustCounter('adultFemale', -1)">-</button>
-              <div class="counter-value" id="counter_adultFemale">0</div>
-              <button class="btn-counter" onclick="adjustCounter('adultFemale', 1)">+</button>
-            </div>
-          </div>
-          
-          <!-- Children gender tweak -->
-          <div class="tweak-row" style="border-top: 1px dashed var(--border-light); padding-top: 12px;">
-            <div class="tweak-label">
-              男性幼兒 <span>(0歲-學齡前)</span>
-            </div>
-            <div class="counter-control">
-              <button class="btn-counter" onclick="adjustCounter('childMale', -1)">-</button>
-              <div class="counter-value" id="counter_childMale">0</div>
-              <button class="btn-counter" onclick="adjustCounter('childMale', 1)">+</button>
-            </div>
-          </div>
-          
-          <div class="tweak-row">
-            <div class="tweak-label">
-              女性幼兒 <span>(0歲-學齡前)</span>
-            </div>
-            <div class="counter-control">
-              <button class="btn-counter" onclick="adjustCounter('childFemale', -1)">-</button>
-              <div class="counter-value" id="counter_childFemale">0</div>
-              <button class="btn-counter" onclick="adjustCounter('childFemale', 1)">+</button>
-            </div>
-          </div>
-          
-          <!-- Children age ranges tweak -->
-          <div style="border-top: 1px dashed var(--border-light); padding-top: 12px;">
-            <div class="form-label" style="margin-bottom: 8px; font-size: 0.78rem; color: var(--text-muted);">
-              幼兒各年齡人數調整
-            </div>
-            
-            <div class="tweak-row" style="margin-bottom: 8px;">
-              <div class="tweak-label">0歲 - 1歲</div>
-              <div class="counter-control">
-                <button class="btn-counter" onclick="adjustCounter('age0_1', -1)">-</button>
-                <div class="counter-value" id="counter_age0_1">0</div>
-                <button class="btn-counter" onclick="adjustCounter('age0_1', 1)">+</button>
-              </div>
-            </div>
-            
-            <div class="tweak-row" style="margin-bottom: 8px;">
-              <div class="tweak-label">1歲 - 2歲</div>
-              <div class="counter-control">
-                <button class="btn-counter" onclick="adjustCounter('age1_2', -1)">-</button>
-                <div class="counter-value" id="counter_age1_2">0</div>
-                <button class="btn-counter" onclick="adjustCounter('age1_2', 1)">+</button>
-              </div>
-            </div>
-            
-            <div class="tweak-row" style="margin-bottom: 8px;">
-              <div class="tweak-label">2歲 - 3歲</div>
-              <div class="counter-control">
-                <button class="btn-counter" onclick="adjustCounter('age2_3', -1)">-</button>
-                <div class="counter-value" id="counter_age2_3">0</div>
-                <button class="btn-counter" onclick="adjustCounter('age2_3', 1)">+</button>
-              </div>
-            </div>
-            
-            <div class="tweak-row" style="margin-bottom: 8px;">
-              <div class="tweak-label">3歲 - 4歲</div>
-              <div class="counter-control">
-                <button class="btn-counter" onclick="adjustCounter('age3_4', -1)">-</button>
-                <div class="counter-value" id="counter_age3_4">0</div>
-                <button class="btn-counter" onclick="adjustCounter('age3_4', 1)">+</button>
-              </div>
-            </div>
-            
-            <div class="tweak-row" style="margin-bottom: 8px;">
-              <div class="tweak-label">4歲 - 6歲</div>
-              <div class="counter-control">
-                <button class="btn-counter" onclick="adjustCounter('age4_6', -1)">-</button>
-                <div class="counter-value" id="counter_age4_6">0</div>
-                <button class="btn-counter" onclick="adjustCounter('age4_6', 1)">+</button>
-              </div>
-            </div>
-            
-            <div class="tweak-row">
-              <div class="tweak-label">6歲以上 (未上小學)</div>
-              <div class="counter-control">
-                <button class="btn-counter" onclick="adjustCounter('age6_school', -1)">-</button>
-                <div class="counter-value" id="counter_age6_school">0</div>
-                <button class="btn-counter" onclick="adjustCounter('age6_school', 1)">+</button>
-              </div>
-            </div>
-          </div>
-          
-          <button class="btn-generate-tweak" onclick="runCustomScenario()">
-            🚀 依此人數生成並跳轉
           </button>
           
         </div>

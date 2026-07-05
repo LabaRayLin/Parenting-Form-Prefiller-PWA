@@ -1,32 +1,31 @@
-/* Design Tokens & CSS Variables */
 :root {
-  --primary: hsl(247, 100%, 67%);
-  --primary-light: hsl(247, 100%, 75%);
-  --primary-dark: hsl(247, 85%, 55%);
+  --primary: hsl(330, 90%, 65%);
+  --primary-light: hsl(330, 95%, 78%);
+  --primary-dark: hsl(330, 80%, 55%);
   
-  --secondary: hsl(14, 100%, 74%);
-  --secondary-light: hsl(14, 100%, 82%);
+  --secondary: hsl(25, 95%, 72%);
+  --secondary-light: hsl(25, 100%, 82%);
   
-  --accent-mint: hsl(142, 70%, 50%);
-  --accent-lavender: hsl(265, 100%, 80%);
+  --accent-mint: hsl(142, 60%, 62%);
+  --accent-lavender: hsl(275, 90%, 82%);
   
-  --bg-app: linear-gradient(135deg, hsl(260, 100%, 98%) 0%, hsl(340, 100%, 98%) 100%);
-  --bg-card: hsla(0, 0%, 100%, 0.7);
+  --bg-app: linear-gradient(135deg, hsl(330, 100%, 98%) 0%, hsl(45, 100%, 97%) 100%);
+  --bg-card: hsla(0, 0%, 100%, 0.75);
   --bg-input: hsl(0, 0%, 100%);
   
-  --text-main: hsl(240, 20%, 15%);
-  --text-muted: hsl(240, 10%, 45%);
+  --text-main: hsl(330, 30%, 22%);
+  --text-muted: hsl(330, 15%, 48%);
   --text-on-primary: hsl(0, 0%, 100%);
   
-  --border-light: hsla(240, 15%, 90%, 0.6);
-  --border-focus: hsl(247, 100%, 67%);
+  --border-light: hsla(330, 30%, 90%, 0.6);
+  --border-focus: hsl(330, 90%, 65%);
   
-  --glass-bg: hsla(0, 0%, 100%, 0.45);
-  --glass-border: hsla(0, 0%, 100%, 0.5);
+  --glass-bg: hsla(0, 0%, 100%, 0.5);
+  --glass-border: hsla(0, 0%, 100%, 0.6);
   
-  --shadow-sm: 0 2px 8px rgba(109, 88, 255, 0.05);
-  --shadow-md: 0 8px 30px rgba(109, 88, 255, 0.08);
-  --shadow-lg: 0 20px 40px rgba(109, 88, 255, 0.15);
+  --shadow-sm: 0 2px 8px rgba(255, 158, 202, 0.05);
+  --shadow-md: 0 8px 30px rgba(255, 158, 202, 0.08);
+  --shadow-lg: 0 20px 40px rgba(255, 158, 202, 0.15);
   
   --radius-sm: 12px;
   --radius-md: 18px;
@@ -38,25 +37,25 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary: hsl(247, 100%, 72%);
-    --primary-light: hsl(247, 100%, 78%);
-    --primary-dark: hsl(247, 85%, 62%);
+    --primary: hsl(330, 90%, 70%);
+    --primary-light: hsl(330, 95%, 80%);
+    --primary-dark: hsl(330, 80%, 60%);
     
-    --secondary: hsl(14, 100%, 78%);
-    --secondary-light: hsl(14, 100%, 85%);
+    --secondary: hsl(25, 95%, 75%);
+    --secondary-light: hsl(25, 100%, 85%);
     
-    --bg-app: linear-gradient(135deg, hsl(250, 25%, 8%) 0%, hsl(330, 25%, 8%) 100%);
-    --bg-card: hsla(240, 25%, 12%, 0.7);
-    --bg-input: hsl(240, 20%, 16%);
+    --bg-app: linear-gradient(135deg, hsl(330, 25%, 9%) 0%, hsl(350, 20%, 12%) 100%);
+    --bg-card: hsla(330, 20%, 15%, 0.75);
+    --bg-input: hsl(330, 15%, 18%);
     
-    --text-main: hsl(240, 20%, 94%);
-    --text-muted: hsl(240, 10%, 70%);
+    --text-main: hsl(330, 40%, 95%);
+    --text-muted: hsl(330, 15%, 75%);
     
-    --border-light: hsla(240, 15%, 25%, 0.6);
-    --border-focus: hsl(247, 100%, 72%);
+    --border-light: hsla(330, 15%, 28%, 0.6);
+    --border-focus: hsl(330, 90%, 70%);
     
-    --glass-bg: hsla(240, 25%, 12%, 0.45);
-    --glass-border: hsla(240, 25%, 20%, 0.5);
+    --glass-bg: hsla(330, 20%, 15%, 0.5);
+    --glass-border: hsla(330, 20%, 25%, 0.6);
     
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
     --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.3);

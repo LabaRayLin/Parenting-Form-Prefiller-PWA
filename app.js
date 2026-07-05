@@ -70,19 +70,7 @@ const DEFAULT_PROFILE = {
 
 let currentProfile = JSON.parse(localStorage.getItem('parenting_profile')) || DEFAULT_PROFILE;
 
-// Tweak State (Temporary counters on Home screen)
-let tweakCounters = {
-  adultMale: 0,
-  adultFemale: 0,
-  childMale: 0,
-  childFemale: 0,
-  age0_1: 0,
-  age1_2: 0,
-  age2_3: 0,
-  age3_4: 0,
-  age4_6: 0,
-  age6_school: 0
-};
+
 
 // Initialize PWA Service Worker
 if ('serviceWorker' in navigator) {
@@ -114,9 +102,7 @@ const districtSelect = document.getElementById('district');
 const villageGroup = document.getElementById('villageGroup');
 const villageSelect = document.getElementById('village');
 
-// Tweak elements
-const tweakToggle = document.getElementById('tweakToggle');
-const tweakContent = document.getElementById('tweakContent');
+
 
 // Helper to determine age range entry ID
 function getAgeEntryId(ageRange) {
@@ -147,13 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Form submission
   settingsForm.addEventListener('submit', handleSettingsSave);
   
-  // Tweak accordion toggle
-  tweakToggle.addEventListener('click', toggleTweakAccordion);
-  
   // Render views
   populateDistrictDropdown();
   renderProfileSummary();
-  initializeTweakCounters();
   
   // If the profile is fresh (names are empty), open settings automatically
   if (!currentProfile.parents.dadName && !currentProfile.parents.momName && !currentProfile.parents.otherName) {
@@ -384,78 +366,7 @@ function renderProfileSummary() {
   `;
 }
 
-// Accordion Tweak Panel
-function toggleTweakAccordion() {
-  tweakContent.classList.toggle('open');
-  const arrow = tweakToggle.querySelector('.arrow');
-  if (tweakContent.classList.contains('open')) {
-    arrow.textContent = '▲';
-  } else {
-    arrow.textContent = '▼';
-  }
-}
 
-// Tweak Counters Handler
-function initializeTweakCounters() {
-  // Reset
-  tweakCounters = {
-    adultMale: 0,
-    adultFemale: 0,
-    childMale: 0,
-    childFemale: 0,
-    age0_1: 0,
-    age1_2: 0,
-    age2_3: 0,
-    age3_4: 0,
-    age4_6: 0,
-    age6_school: 0
-  };
-  
-  // Read counts from current profile to serve as baseline
-  // Adults base depends on the selected primary, but tweak is mostly for custom tuning
-  // Let's set child baseline from profile
-  if (currentProfile.children) {
-    currentProfile.children.forEach(c => {
-      if (c.gender === '男') tweakCounters.childMale++;
-      else tweakCounters.childFemale++;
-      
-      switch (c.ageRange) {
-        case '0歲 - 1歲': tweakCounters.age0_1++; break;
-        case '1歲 - 2歲': tweakCounters.age1_2++; break;
-        case '2歲 - 3歲': tweakCounters.age2_3++; break;
-        case '3歲 - 4歲': tweakCounters.age3_4++; break;
-        case '4歲 - 6歲': tweakCounters.age4_6++; break;
-        case '6歲以上 (未上小學)': tweakCounters.age6_school++; break;
-      }
-    });
-  }
-  
-  // Render counters in tweak UI
-  updateCounterUI('adultMale', tweakCounters.adultMale);
-  updateCounterUI('adultFemale', tweakCounters.adultFemale);
-  updateCounterUI('childMale', tweakCounters.childMale);
-  updateCounterUI('childFemale', tweakCounters.childFemale);
-  updateCounterUI('age0_1', tweakCounters.age0_1);
-  updateCounterUI('age1_2', tweakCounters.age1_2);
-  updateCounterUI('age2_3', tweakCounters.age2_3);
-  updateCounterUI('age3_4', tweakCounters.age3_4);
-  updateCounterUI('age4_6', tweakCounters.age4_6);
-  updateCounterUI('age6_school', tweakCounters.age6_school);
-}
-
-function updateCounterUI(key, val) {
-  const el = document.getElementById(`counter_${key}`);
-  if (el) {
-    el.textContent = val;
-  }
-}
-
-window.adjustCounter = function(key, amount) {
-  let min = 0;
-  // Make sure counts don't go below 0
-  tweakCounters[key] = Math.max(min, tweakCounters[key] + amount);
-  updateCounterUI(key, tweakCounters[key]);
-};
 
 // URL builder helper
 function buildUrl(fields) {
@@ -595,53 +506,7 @@ window.runGrandScenario = function() {
   triggerRedirect(buildUrl(fields));
 };
 
-// Custom / Adjusted tweak link generator
-window.runCustomScenario = function() {
-  // Let the user choose who is the contact parent
-  let parentName = currentProfile.parents.dadName || currentProfile.parents.momName || currentProfile.parents.otherName;
-  let parentPhone = currentProfile.parents.dadPhone || currentProfile.parents.momPhone || currentProfile.parents.otherPhone;
-  
-  if (!parentName) {
-    alert("請先完成基本資料設定！");
-    openSettings();
-    return;
-  }
-  
-  const fields = getCommonPrefills();
-  fields[ENTRIES.parentName] = parentName;
-  fields[ENTRIES.parentPhone] = parentPhone;
-  
-  // Apply tweak counters directly
-  if (tweakCounters.adultMale > 0) fields[ENTRIES.adultMale] = String(tweakCounters.adultMale);
-  if (tweakCounters.adultFemale > 0) fields[ENTRIES.adultFemale] = String(tweakCounters.adultFemale);
-  
-  // Identity grid deduction:
-  // Guess status count based on adults sum
-  const totalAdults = tweakCounters.adultMale + tweakCounters.adultFemale;
-  if (totalAdults > 0) {
-    // If it matches profile grandparents
-    if (parentName === currentProfile.parents.otherName) {
-      if (currentProfile.parents.otherRelation === '祖父母') fields[ENTRIES.statusGrand] = String(totalAdults);
-      else fields[ENTRIES.statusRelative] = String(totalAdults);
-    } else {
-      fields[ENTRIES.statusParent] = String(totalAdults);
-    }
-  }
-  
-  // Children gender counters
-  if (tweakCounters.childMale > 0) fields[ENTRIES.childMale] = String(tweakCounters.childMale);
-  if (tweakCounters.childFemale > 0) fields[ENTRIES.childFemale] = String(tweakCounters.childFemale);
-  
-  // Children age counters
-  if (tweakCounters.age0_1 > 0) fields[ENTRIES.age0_1] = String(tweakCounters.age0_1);
-  if (tweakCounters.age1_2 > 0) fields[ENTRIES.age1_2] = String(tweakCounters.age1_2);
-  if (tweakCounters.age2_3 > 0) fields[ENTRIES.age2_3] = String(tweakCounters.age2_3);
-  if (tweakCounters.age3_4 > 0) fields[ENTRIES.age3_4] = String(tweakCounters.age3_4);
-  if (tweakCounters.age4_6 > 0) fields[ENTRIES.age4_6] = String(tweakCounters.age4_6);
-  if (tweakCounters.age6_school > 0) fields[ENTRIES.age6_school] = String(tweakCounters.age6_school);
-  
-  triggerRedirect(buildUrl(fields));
-};
+
 
 // Common fields pre-fill builder
 function getCommonPrefills() {

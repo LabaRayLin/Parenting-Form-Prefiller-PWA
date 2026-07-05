@@ -1,6 +1,6 @@
 {
-  "name": "親子館登記表預填助手",
-  "short_name": "登記助手",
+  "name": "四維親子館登記表預填助手",
+  "short_name": "四維親子館",
   "description": "快速生成楊梅四維親子館登記表之預填連結",
   "start_url": "./index.html",
   "display": "standalone",
