@@ -533,13 +533,13 @@ window.runBothScenario = function() {
   const fields = getCommonPrefills();
   fields[ENTRIES.parentName] = `${currentProfile.parents.dadName} / ${currentProfile.parents.momName}`;
   
-  // Phone selection mode
+  // Phone selection mode (only Dad's or Mom's phone, no merged slashes)
   let phone = currentProfile.parents.dadPhone;
   const mode = currentProfile.settings.bothPhoneMode;
   if (mode === 'mom') {
     phone = currentProfile.parents.momPhone;
-  } else if (mode === 'both') {
-    phone = `${currentProfile.parents.dadPhone} / ${currentProfile.parents.momPhone}`;
+  } else {
+    phone = currentProfile.parents.dadPhone || currentProfile.parents.momPhone;
   }
   fields[ENTRIES.parentPhone] = phone;
   
