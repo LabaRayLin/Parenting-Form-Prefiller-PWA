@@ -470,7 +470,21 @@ function triggerRedirect(url) {
   setTimeout(() => {
     window.location.href = url;
   }, 750);
+  
+  // Auto-dismiss after 3 seconds to prevent being stuck if they navigate back
+  setTimeout(() => {
+    overlay.classList.remove('active');
+  }, 3000);
 }
+
+// Reset overlay when returning via history/back button
+window.addEventListener('pageshow', (event) => {
+  const overlay = document.getElementById('loadingOverlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+  }
+});
+
 
 // Scenario 1: Dad Only
 window.runDadScenario = function() {
