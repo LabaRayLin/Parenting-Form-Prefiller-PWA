@@ -1,4 +1,4 @@
-const CACHE_NAME = 'parenting-prefiller-v2';
+const CACHE_NAME = 'parenting-prefiller-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -10,6 +10,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
+  self.skipWaiting(); // Force immediate activation of the new Service Worker
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
@@ -27,6 +28,8 @@ self.addEventListener('activate', (e) => {
           }
         })
       );
+    }).then(() => {
+      return self.clients.claim(); // Force immediate control of all open clients/tabs
     })
   );
 });
