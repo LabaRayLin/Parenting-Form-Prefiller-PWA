@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>楊梅四維親子館 ‧ 入館登記預填助手</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="楊梅四維親子館快速入館登記表預填連結產生器。一鍵選擇情境自動生成已填妥資料的 Google 表單連結，省去重複填寫時間。">
+  <meta name="theme-color" content="#6D58FF">
+  
+  <!-- PWA & Apple Standalone Meta Tags -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="登記預填助手">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header>
+      <div class="logo-section">
+        <img src="./icons/icon-192.png" alt="App Logo" class="app-icon-img">
+        <div class="logo-text">
+          <h1>四維親子館登記助手</h1>
+          <p>Google 表單預填連結產生器</p>
+        </div>
+      </div>
+      <button class="btn-settings-trigger" id="settingsTrigger" title="家庭設定">
+        ⚙️
+      </button>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      
+      <!-- Profile Dashboard Summary -->
+      <section class="card" id="profileSummaryCard">
+        <div class="profile-summary-header">
+          <div class="profile-summary-title">
+            <span>🏠</span> 目前家庭設定
+          </div>
+          <span class="badge-profile-status">已啟用</span>
+        </div>
+        <div class="profile-summary-details" id="profileSummaryContent">
+          <!-- Dynamically populated by app.js -->
+          <div style="text-align: center; padding: 10px 0;">載入設定中...</div>
+        </div>
+      </section>
+
+      <!-- Scenarios Grid -->
+      <section>
+        <div class="section-title">
+          <span>✨</span> 選擇今天入館情境
+        </div>
+        <div class="scenarios-grid">
+          
+          <button class="btn-scenario dad" onclick="runDadScenario()">
+            <div class="icon">👨‍👦</div>
+            <div class="label">爸爸帶小孩</div>
+            <div class="sublabel">1 位男家長</div>
+          </button>
+          
+          <button class="btn-scenario mom" onclick="runMomScenario()">
+            <div class="icon">👩‍👦</div>
+            <div class="label">媽媽帶小孩</div>
+            <div class="sublabel">1 位女家長</div>
+          </button>
+          
+          <button class="btn-scenario both" onclick="runBothScenario()">
+            <div class="icon">👨‍👩‍👧‍👦</div>
+            <div class="label">父母都去</div>
+            <div class="sublabel">2 位大人入館</div>
+          </button>
+          
+          <button class="btn-scenario grand" onclick="runGrandScenario()">
+            <div class="icon">👵‍👦</div>
+            <div class="label">長輩/其他帶</div>
+            <div class="sublabel">祖父母或親屬</div>
+          </button>
+          
+        </div>
+      </section>
+
+      <!-- Quick Tweak Accordion -->
+      <section class="card">
+        <div class="tweak-header" id="tweakToggle">
+          <div class="section-title" style="margin-bottom: 0;">
+            <span>🔧</span> 自訂本次入館人數
+          </div>
+          <span class="arrow">▼</span>
+        </div>
+        
+        <div class="tweak-content" id="tweakContent">
+          
+          <!-- Adults tweak -->
+          <div class="tweak-row">
+            <div class="tweak-label">
+              男性家長/陪同者 <span>(國小含以上)</span>
+            </div>
+            <div class="counter-control">
+              <button class="btn-counter" onclick="adjustCounter('adultMale', -1)">-</button>
+              <div class="counter-value" id="counter_adultMale">0</div>
+              <button class="btn-counter" onclick="adjustCounter('adultMale', 1)">+</button>
+            </div>
+          </div>
+          
+          <div class="tweak-row">
+            <div class="tweak-label">
+              女性家長/陪同者 <span>(國小含以上)</span>
+            </div>
+            <div class="counter-control">
+              <button class="btn-counter" onclick="adjustCounter('adultFemale', -1)">-</button>
+              <div class="counter-value" id="counter_adultFemale">0</div>
+              <button class="btn-counter" onclick="adjustCounter('adultFemale', 1)">+</button>
+            </div>
+          </div>
+          
+          <!-- Children gender tweak -->
+          <div class="tweak-row" style="border-top: 1px dashed var(--border-light); padding-top: 12px;">
+            <div class="tweak-label">
+              男性幼兒 <span>(0歲-學齡前)</span>
+            </div>
+            <div class="counter-control">
+              <button class="btn-counter" onclick="adjustCounter('childMale', -1)">-</button>
+              <div class="counter-value" id="counter_childMale">0</div>
+              <button class="btn-counter" onclick="adjustCounter('childMale', 1)">+</button>
+            </div>
+          </div>
+          
+          <div class="tweak-row">
+            <div class="tweak-label">
+              女性幼兒 <span>(0歲-學齡前)</span>
+            </div>
+            <div class="counter-control">
+              <button class="btn-counter" onclick="adjustCounter('childFemale', -1)">-</button>
+              <div class="counter-value" id="counter_childFemale">0</div>
+              <button class="btn-counter" onclick="adjustCounter('childFemale', 1)">+</button>
+            </div>
+          </div>
+          
+          <!-- Children age ranges tweak -->
+          <div style="border-top: 1px dashed var(--border-light); padding-top: 12px;">
+            <div class="form-label" style="margin-bottom: 8px; font-size: 0.78rem; color: var(--text-muted);">
+              幼兒各年齡人數調整
+            </div>
+            
+            <div class="tweak-row" style="margin-bottom: 8px;">
+              <div class="tweak-label">0歲 - 1歲</div>
+              <div class="counter-control">
+                <button class="btn-counter" onclick="adjustCounter('age0_1', -1)">-</button>
+                <div class="counter-value" id="counter_age0_1">0</div>
+                <button class="btn-counter" onclick="adjustCounter('age0_1', 1)">+</button>
+              </div>
+            </div>
+            
+            <div class="tweak-row" style="margin-bottom: 8px;">
+              <div class="tweak-label">1歲 - 2歲</div>
+              <div class="counter-control">
+                <button class="btn-counter" onclick="adjustCounter('age1_2', -1)">-</button>
+                <div class="counter-value" id="counter_age1_2">0</div>
+                <button class="btn-counter" onclick="adjustCounter('age1_2', 1)">+</button>
+              </div>
+            </div>
+            
+            <div class="tweak-row" style="margin-bottom: 8px;">
+              <div class="tweak-label">2歲 - 3歲</div>
+              <div class="counter-control">
+                <button class="btn-counter" onclick="adjustCounter('age2_3', -1)">-</button>
+                <div class="counter-value" id="counter_age2_3">0</div>
+                <button class="btn-counter" onclick="adjustCounter('age2_3', 1)">+</button>
+              </div>
+            </div>
+            
+            <div class="tweak-row" style="margin-bottom: 8px;">
+              <div class="tweak-label">3歲 - 4歲</div>
+              <div class="counter-control">
+                <button class="btn-counter" onclick="adjustCounter('age3_4', -1)">-</button>
+                <div class="counter-value" id="counter_age3_4">0</div>
+                <button class="btn-counter" onclick="adjustCounter('age3_4', 1)">+</button>
+              </div>
+            </div>
+            
+            <div class="tweak-row" style="margin-bottom: 8px;">
+              <div class="tweak-label">4歲 - 6歲</div>
+              <div class="counter-control">
+                <button class="btn-counter" onclick="adjustCounter('age4_6', -1)">-</button>
+                <div class="counter-value" id="counter_age4_6">0</div>
+                <button class="btn-counter" onclick="adjustCounter('age4_6', 1)">+</button>
+              </div>
+            </div>
+            
+            <div class="tweak-row">
+              <div class="tweak-label">6歲以上 (未上小學)</div>
+              <div class="counter-control">
+                <button class="btn-counter" onclick="adjustCounter('age6_school', -1)">-</button>
+                <div class="counter-value" id="counter_age6_school">0</div>
+                <button class="btn-counter" onclick="adjustCounter('age6_school', 1)">+</button>
+              </div>
+            </div>
+          </div>
+          
+          <button class="btn-generate-tweak" onclick="runCustomScenario()">
+            🚀 依此人數生成並跳轉
+          </button>
+          
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+      <div class="modal-content">
+        
+        <div class="modal-header">
+          <h2>⚙️ 家庭基本設定</h2>
+          <button class="btn-modal-close" id="settingsClose">✕</button>
+        </div>
+        
+        <form id="settingsForm">
+          
+          <!-- First time visited toggle -->
+          <div class="toggle-wrapper" style="margin-bottom: 12px;">
+            <span class="form-label">第一次來楊梅四維親子館？</span>
+            <label class="switch">
+              <input type="checkbox" id="firstTime">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <!-- Parents details -->
+          <div class="form-group">
+            <span class="form-label">👨 爸爸資料</span>
+            <div class="form-row">
+              <input type="text" id="dadName" placeholder="姓名（如：張大寶）">
+              <input type="text" id="dadPhone" placeholder="電話（如：0912...）" inputmode="tel">
+            </div>
+          </div>
+          
+          <div class="form-group" style="margin-top: 12px;">
+            <span class="form-label">👩 媽媽資料</span>
+            <div class="form-row">
+              <input type="text" id="momName" placeholder="姓名（如：王小美）">
+              <input type="text" id="momPhone" placeholder="電話（如：0987...）" inputmode="tel">
+            </div>
+          </div>
+
+          <!-- Phone combine settings -->
+          <div class="form-group" style="margin-top: 12px;">
+            <label class="form-label" for="bothPhoneMode">雙方共同入館時的電話預填模式</label>
+            <select id="bothPhoneMode">
+              <option value="dad">優先使用「爸爸的電話」</option>
+              <option value="mom">優先使用「媽媽的電話」</option>
+              <option value="both">合併顯示（格式：爸爸電話 / 媽媽電話）</option>
+            </select>
+          </div>
+          
+          <div class="form-group" style="margin-top: 12px; border-top: 1px dashed var(--border-light); padding-top: 12px;">
+            <span class="form-label">👵 隨同長輩/其他陪同者資料</span>
+            <div class="form-row">
+              <input type="text" id="otherName" placeholder="姓名（如：陳阿嬤）">
+              <input type="text" id="otherPhone" placeholder="電話（如：0922...）" inputmode="tel">
+            </div>
+            <div class="form-row" style="margin-top: 8px;">
+              <select id="otherRelation">
+                <option value="祖父母">關係：祖父母 (阿公/阿嬤/外公/外婆)</option>
+                <option value="親屬">關係：其他親屬</option>
+                <option value="保母">關係：保母</option>
+                <option value="其他">關係：其他身份</option>
+              </select>
+              <select id="otherGender">
+                <option value="女">性別：女性陪同者</option>
+                <option value="男">性別：男性陪同者</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="form-group" style="margin-top: 12px; border-top: 1px dashed var(--border-light); padding-top: 12px;">
+            <label class="form-label" for="district">📍 桃園市居住地區</label>
+            <select id="district">
+              <option value="楊梅區">楊梅區</option>
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          
+          <div class="form-group" id="villageGroup" style="margin-top: 10px; display: flex;">
+            <label class="form-label" for="village">🏡 楊梅區居住里別</label>
+            <select id="village">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <!-- Children settings -->
+          <div style="margin-top: 16px; border-top: 1px dashed var(--border-light); padding-top: 12px;">
+            <div class="children-section-header">
+              <span class="form-label">👶 幼兒資料管理</span>
+              <button type="button" class="btn-add-child" id="btnAddChild">
+                ＋ 新增孩子
+              </button>
+            </div>
+            
+            <div class="children-list" id="childrenContainer">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <button type="submit" class="btn-save-settings">
+            💾 儲存家庭設定
+          </button>
+        </form>
+        
+      </div>
+    </div>
+
+    <!-- Redirect Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+      <div class="loading-text">正在生成表單，跳轉中...</div>
+      <div class="helper-text">預填已填妥 100% 資料，入館前直接提交即可！</div>
+    </div>
+
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
