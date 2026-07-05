@@ -1,4 +1,4 @@
-const CACHE_NAME = 'parenting-prefiller-v1';
+const CACHE_NAME = 'parenting-prefiller-v2';
 const ASSETS = [
   './',
   './index.html',
