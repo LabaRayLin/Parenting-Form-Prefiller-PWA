@@ -182,8 +182,8 @@ function updateMonthlyCalendarLink() {
   const now = new Date();
   const minguoYear = now.getFullYear() - 1911;
   const month = now.getMonth() + 1;
-  const keyword = `【楊梅四維親子館 ‧ ${minguoYear}年${month}月活動行事曆】`;
-  const url = `https://babycare.tycg.gov.tw/#/search?keyword=${encodeURIComponent(keyword)}`;
+  const keyword = `楊梅四維親子館 · ${minguoYear}年${month}月活動行事曆`;
+  const url = `https://babycare.tycg.gov.tw//#/search?keyword=${encodeURIComponent(keyword)}`;
   
   const linkEl = document.getElementById('monthlyCalendarLink');
   const textEl = document.getElementById('calendarLinkText');
