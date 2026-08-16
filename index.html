@@ -44,6 +44,32 @@
     <!-- Main Content -->
     <main>
       
+      <!-- Top Pinned Notice / Info Card -->
+      <section class="top-pinned-notice">
+        <div class="notice-schedule">
+          <span class="notice-icon">⏰</span>
+          <div class="notice-schedule-text">
+            <span class="notice-label">館舍開放時間</span>
+            <span class="notice-value">週二 - 週日 09:00-12:00，14:00-17:00</span>
+          </div>
+        </div>
+        <div class="notice-divider"></div>
+        <div class="notice-links-row">
+          <a href="#" target="_blank" rel="noopener noreferrer" class="notice-news-link" id="monthlyCalendarLink">
+            <div class="notice-news-left">
+              <span class="notice-icon">📅</span>
+              <span class="notice-news-title">最新消息</span>
+            </div>
+            <span class="notice-link-btn">
+              <span id="calendarLinkText">本月活動行事曆</span> <span class="arrow">↗</span>
+            </span>
+          </a>
+          <a href="https://www.facebook.com/ymswpcc/photos?locale=zh_TW" target="_blank" rel="noopener noreferrer" class="notice-fb-sublink" title="前往四維親子館 FB 粉專">
+            <span>FB</span> ↗
+          </a>
+        </div>
+      </section>
+
       <!-- Profile Dashboard Summary -->
       <section class="card" id="profileSummaryCard">
         <div class="profile-summary-header">
@@ -83,10 +109,22 @@
             <div class="sublabel">2 位大人入館</div>
           </button>
           
-          <button class="btn-scenario grand" onclick="runGrandScenario()">
+          <button class="btn-scenario grandma" onclick="runGrandmaScenario()">
             <div class="icon">👵‍👦</div>
-            <div class="label">長輩/其他帶</div>
-            <div class="sublabel">祖父母或親屬</div>
+            <div class="label">奶奶帶小孩</div>
+            <div class="sublabel">1 位女性長輩</div>
+          </button>
+
+          <button class="btn-scenario grandpa" onclick="runGrandpaScenario()">
+            <div class="icon">👴‍👦</div>
+            <div class="label">爺爺帶小孩</div>
+            <div class="sublabel">1 位男性長輩</div>
+          </button>
+
+          <button class="btn-scenario grandBoth" onclick="runGrandBothScenario()">
+            <div class="icon">👵👴</div>
+            <div class="label">爺奶都去</div>
+            <div class="sublabel">2 位長輩入館</div>
           </button>
           
         </div>
@@ -131,33 +169,39 @@
             </div>
           </div>
 
-          <!-- Phone combine settings -->
+          <!-- Parents phone combine settings -->
           <div class="form-group" style="margin-top: 12px;">
-            <label class="form-label" for="bothPhoneMode">雙方共同入館時的聯絡電話</label>
+            <label class="form-label" for="bothPhoneMode">父母共同入館時的聯絡電話</label>
             <select id="bothPhoneMode">
               <option value="dad">使用「爸爸的電話」</option>
               <option value="mom">使用「媽媽的電話」</option>
             </select>
           </div>
           
+          <!-- Grandparents details -->
           <div class="form-group" style="margin-top: 12px; border-top: 1px dashed var(--border-light); padding-top: 12px;">
-            <span class="form-label">👵 隨同長輩/其他陪同者資料</span>
+            <span class="form-label">👴 爺爺資料</span>
             <div class="form-row">
-              <input type="text" id="otherName" placeholder="姓名（如：陳阿嬤）">
-              <input type="text" id="otherPhone" placeholder="電話（如：0922...）" inputmode="tel">
+              <input type="text" id="grandpaName" placeholder="姓名（如：張爺爺）">
+              <input type="text" id="grandpaPhone" placeholder="電話（如：0910...）" inputmode="tel">
             </div>
-            <div class="form-row" style="margin-top: 8px;">
-              <select id="otherRelation">
-                <option value="祖父母">關係：祖父母 (阿公/阿嬤/外公/外婆)</option>
-                <option value="親屬">關係：其他親屬</option>
-                <option value="保母">關係：保母</option>
-                <option value="其他">關係：其他身份</option>
-              </select>
-              <select id="otherGender">
-                <option value="女">性別：女性陪同者</option>
-                <option value="男">性別：男性陪同者</option>
-              </select>
+          </div>
+
+          <div class="form-group" style="margin-top: 12px;">
+            <span class="form-label">👵 奶奶資料</span>
+            <div class="form-row">
+              <input type="text" id="grandmaName" placeholder="姓名（如：李奶奶）">
+              <input type="text" id="grandmaPhone" placeholder="電話（如：0920...）" inputmode="tel">
             </div>
+          </div>
+
+          <!-- Grandparents phone combine settings -->
+          <div class="form-group" style="margin-top: 12px;">
+            <label class="form-label" for="grandBothPhoneMode">爺奶共同入館時的聯絡電話</label>
+            <select id="grandBothPhoneMode">
+              <option value="grandma">使用「奶奶的電話」</option>
+              <option value="grandpa">使用「爺爺的電話」</option>
+            </select>
           </div>
 
           <!-- Address -->

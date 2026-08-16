@@ -51,10 +51,10 @@ const DEFAULT_PROFILE = {
     dadPhone: "",
     momName: "",
     momPhone: "",
-    otherName: "",
-    otherPhone: "",
-    otherRelation: "祖父母",
-    otherGender: "女"
+    grandpaName: "",
+    grandpaPhone: "",
+    grandmaName: "",
+    grandmaPhone: ""
   },
   children: [
     { gender: "男", ageRange: "1歲 - 2歲" }
@@ -64,11 +64,44 @@ const DEFAULT_PROFILE = {
     village: "四維里"
   },
   settings: {
-    bothPhoneMode: "dad" // dad, mom, both
+    bothPhoneMode: "dad", // dad, mom
+    grandBothPhoneMode: "grandma" // grandma, grandpa
   }
 };
 
-let currentProfile = JSON.parse(localStorage.getItem('parenting_profile')) || DEFAULT_PROFILE;
+function loadStoredProfile() {
+  const saved = localStorage.getItem('parenting_profile');
+  if (!saved) return DEFAULT_PROFILE;
+  try {
+    const parsed = JSON.parse(saved);
+    return {
+      firstTime: parsed.firstTime || "否",
+      parents: {
+        dadName: parsed.parents?.dadName || "",
+        dadPhone: parsed.parents?.dadPhone || "",
+        momName: parsed.parents?.momName || "",
+        momPhone: parsed.parents?.momPhone || "",
+        grandpaName: parsed.parents?.grandpaName || (parsed.parents?.otherGender === '男' ? parsed.parents?.otherName || '' : ''),
+        grandpaPhone: parsed.parents?.grandpaPhone || (parsed.parents?.otherGender === '男' ? parsed.parents?.otherPhone || '' : ''),
+        grandmaName: parsed.parents?.grandmaName || (parsed.parents?.otherGender !== '男' ? parsed.parents?.otherName || '' : ''),
+        grandmaPhone: parsed.parents?.grandmaPhone || (parsed.parents?.otherGender !== '男' ? parsed.parents?.otherPhone || '' : '')
+      },
+      children: Array.isArray(parsed.children) && parsed.children.length > 0 ? parsed.children : DEFAULT_PROFILE.children,
+      address: {
+        district: parsed.address?.district || "楊梅區",
+        village: parsed.address?.village || "四維里"
+      },
+      settings: {
+        bothPhoneMode: parsed.settings?.bothPhoneMode || "dad",
+        grandBothPhoneMode: parsed.settings?.grandBothPhoneMode || "grandma"
+      }
+    };
+  } catch (e) {
+    return DEFAULT_PROFILE;
+  }
+}
+
+let currentProfile = loadStoredProfile();
 
 
 
@@ -136,12 +169,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render views
   populateDistrictDropdown();
   renderProfileSummary();
+  updateMonthlyCalendarLink();
   
   // If the profile is fresh (names are empty), open settings automatically
-  if (!currentProfile.parents.dadName && !currentProfile.parents.momName && !currentProfile.parents.otherName) {
+  if (!currentProfile.parents.dadName && !currentProfile.parents.momName && !currentProfile.parents.grandpaName && !currentProfile.parents.grandmaName) {
     setTimeout(openSettings, 300);
   }
 });
+
+// Update dynamic monthly calendar link (Taoyuan Babycare Search)
+function updateMonthlyCalendarLink() {
+  const now = new Date();
+  const minguoYear = now.getFullYear() - 1911;
+  const month = now.getMonth() + 1;
+  const keyword = `【楊梅四維親子館 ‧ ${minguoYear}年${month}月活動行事曆】`;
+  const url = `https://babycare.tycg.gov.tw/#/search?keyword=${encodeURIComponent(keyword)}`;
+  
+  const linkEl = document.getElementById('monthlyCalendarLink');
+  const textEl = document.getElementById('calendarLinkText');
+  
+  if (linkEl) {
+    linkEl.href = url;
+  }
+  if (textEl) {
+    textEl.textContent = `${minguoYear}年${month}月行事曆`;
+  }
+}
 
 // Populate district options
 function populateDistrictDropdown() {
@@ -186,11 +239,12 @@ function openSettings() {
   document.getElementById('dadPhone').value = currentProfile.parents.dadPhone || '';
   document.getElementById('momName').value = currentProfile.parents.momName || '';
   document.getElementById('momPhone').value = currentProfile.parents.momPhone || '';
-  document.getElementById('otherName').value = currentProfile.parents.otherName || '';
-  document.getElementById('otherPhone').value = currentProfile.parents.otherPhone || '';
-  document.getElementById('otherRelation').value = currentProfile.parents.otherRelation || '祖父母';
-  document.getElementById('otherGender').value = currentProfile.parents.otherGender || '女';
+  document.getElementById('grandpaName').value = currentProfile.parents.grandpaName || '';
+  document.getElementById('grandpaPhone').value = currentProfile.parents.grandpaPhone || '';
+  document.getElementById('grandmaName').value = currentProfile.parents.grandmaName || '';
+  document.getElementById('grandmaPhone').value = currentProfile.parents.grandmaPhone || '';
   document.getElementById('bothPhoneMode').value = currentProfile.settings.bothPhoneMode || 'dad';
+  document.getElementById('grandBothPhoneMode').value = currentProfile.settings.grandBothPhoneMode || 'grandma';
   
   districtSelect.value = currentProfile.address.district || '楊梅區';
   handleDistrictChange();
@@ -284,10 +338,10 @@ function handleSettingsSave(e) {
       dadPhone: document.getElementById('dadPhone').value.trim(),
       momName: document.getElementById('momName').value.trim(),
       momPhone: document.getElementById('momPhone').value.trim(),
-      otherName: document.getElementById('otherName').value.trim(),
-      otherPhone: document.getElementById('otherPhone').value.trim(),
-      otherRelation: document.getElementById('otherRelation').value,
-      otherGender: document.getElementById('otherGender').value
+      grandpaName: document.getElementById('grandpaName').value.trim(),
+      grandpaPhone: document.getElementById('grandpaPhone').value.trim(),
+      grandmaName: document.getElementById('grandmaName').value.trim(),
+      grandmaPhone: document.getElementById('grandmaPhone').value.trim()
     },
     children: children,
     address: {
@@ -295,7 +349,8 @@ function handleSettingsSave(e) {
       village: districtSelect.value === '楊梅區' ? villageSelect.value : ''
     },
     settings: {
-      bothPhoneMode: document.getElementById('bothPhoneMode').value
+      bothPhoneMode: document.getElementById('bothPhoneMode').value,
+      grandBothPhoneMode: document.getElementById('grandBothPhoneMode').value
     }
   };
   
@@ -303,7 +358,6 @@ function handleSettingsSave(e) {
   
   // Update views
   renderProfileSummary();
-  initializeTweakCounters();
   
   closeSettings();
 }
@@ -320,8 +374,11 @@ function renderProfileSummary() {
   if (currentProfile.parents.momName) {
     parentsHtml += `${parentsHtml ? '<br>' : ''}👩 媽媽：${currentProfile.parents.momName} (${currentProfile.parents.momPhone || '無電話'})`;
   }
-  if (currentProfile.parents.otherName) {
-    parentsHtml += `${parentsHtml ? '<br>' : ''}👵 其他：${currentProfile.parents.otherName} (${currentProfile.parents.otherPhone || '無電話'}) - ${currentProfile.parents.otherRelation}`;
+  if (currentProfile.parents.grandpaName) {
+    parentsHtml += `${parentsHtml ? '<br>' : ''}👴 爺爺：${currentProfile.parents.grandpaName} (${currentProfile.parents.grandpaPhone || '無電話'})`;
+  }
+  if (currentProfile.parents.grandmaName) {
+    parentsHtml += `${parentsHtml ? '<br>' : ''}👵 奶奶：${currentProfile.parents.grandmaName} (${currentProfile.parents.grandmaPhone || '無電話'})`;
   }
   if (!parentsHtml) {
     parentsHtml = '⚠️ 請點選右上角 ⚙️ 設定家庭資料';
@@ -471,36 +528,66 @@ window.runBothScenario = function() {
   triggerRedirect(buildUrl(fields));
 };
 
-// Scenario 4: Grandparents / Relatives
-window.runGrandScenario = function() {
-  if (!currentProfile.parents.otherName) {
-    alert("請先填寫祖父母/親屬姓名資料！");
+// Scenario 4: Grandma Only
+window.runGrandmaScenario = function() {
+  if (!currentProfile.parents.grandmaName) {
+    alert("請先填寫奶奶姓名資料！");
     openSettings();
     return;
   }
   
   const fields = getCommonPrefills();
-  fields[ENTRIES.parentName] = currentProfile.parents.otherName;
-  fields[ENTRIES.parentPhone] = currentProfile.parents.otherPhone;
+  fields[ENTRIES.parentName] = currentProfile.parents.grandmaName;
+  fields[ENTRIES.parentPhone] = currentProfile.parents.grandmaPhone;
+  fields[ENTRIES.adultFemale] = "1";
+  fields[ENTRIES.statusGrand] = "1";
   
-  // Set count based on gender
-  if (currentProfile.parents.otherGender === '男') {
-    fields[ENTRIES.adultMale] = "1";
-  } else {
-    fields[ENTRIES.adultFemale] = "1";
+  addChildPrefills(fields, currentProfile.children);
+  triggerRedirect(buildUrl(fields));
+};
+
+// Scenario 5: Grandpa Only
+window.runGrandpaScenario = function() {
+  if (!currentProfile.parents.grandpaName) {
+    alert("請先填寫爺爺姓名資料！");
+    openSettings();
+    return;
   }
   
-  // Set status
-  const rel = currentProfile.parents.otherRelation;
-  if (rel === '祖父母') {
-    fields[ENTRIES.statusGrand] = "1";
-  } else if (rel === '親屬') {
-    fields[ENTRIES.statusRelative] = "1";
-  } else if (rel === '保母') {
-    fields[ENTRIES.statusNanny] = "1";
-  } else {
-    fields[ENTRIES.statusOther] = "1";
+  const fields = getCommonPrefills();
+  fields[ENTRIES.parentName] = currentProfile.parents.grandpaName;
+  fields[ENTRIES.parentPhone] = currentProfile.parents.grandpaPhone;
+  fields[ENTRIES.adultMale] = "1";
+  fields[ENTRIES.statusGrand] = "1";
+  
+  addChildPrefills(fields, currentProfile.children);
+  triggerRedirect(buildUrl(fields));
+};
+
+// Scenario 6: Both Grandparents
+window.runGrandBothScenario = function() {
+  if (!currentProfile.parents.grandpaName || !currentProfile.parents.grandmaName) {
+    alert("請先填寫爺爺與奶奶姓名資料！");
+    openSettings();
+    return;
   }
+  
+  const fields = getCommonPrefills();
+  fields[ENTRIES.parentName] = `${currentProfile.parents.grandpaName} / ${currentProfile.parents.grandmaName}`;
+  
+  // Phone selection mode
+  let phone = currentProfile.parents.grandmaPhone;
+  const mode = currentProfile.settings.grandBothPhoneMode || 'grandma';
+  if (mode === 'grandpa') {
+    phone = currentProfile.parents.grandpaPhone || currentProfile.parents.grandmaPhone;
+  } else {
+    phone = currentProfile.parents.grandmaPhone || currentProfile.parents.grandpaPhone;
+  }
+  fields[ENTRIES.parentPhone] = phone;
+  
+  fields[ENTRIES.adultMale] = "1";
+  fields[ENTRIES.adultFemale] = "1";
+  fields[ENTRIES.statusGrand] = "2";
   
   addChildPrefills(fields, currentProfile.children);
   triggerRedirect(buildUrl(fields));
