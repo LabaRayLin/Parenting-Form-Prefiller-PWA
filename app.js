@@ -135,6 +135,12 @@ const districtSelect = document.getElementById('district');
 const villageGroup = document.getElementById('villageGroup');
 const villageSelect = document.getElementById('village');
 
+const calendarModal = document.getElementById('calendarModal');
+const calendarClose = document.getElementById('calendarClose');
+const btnOpenCalendarModal = document.getElementById('btnOpenCalendarModal');
+const calendarBottomCard = document.getElementById('calendarBottomCard');
+const monthlyCalendarLink = document.getElementById('monthlyCalendarLink');
+
 
 
 // Helper to determine age range entry ID
@@ -165,6 +171,33 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Form submission
   settingsForm.addEventListener('submit', handleSettingsSave);
+
+  // Calendar Modal triggers
+  if (monthlyCalendarLink) {
+    monthlyCalendarLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      openCalendarModal();
+    });
+  }
+  if (btnOpenCalendarModal) {
+    btnOpenCalendarModal.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openCalendarModal();
+    });
+  }
+  if (calendarBottomCard) {
+    calendarBottomCard.addEventListener('click', () => {
+      openCalendarModal();
+    });
+  }
+  if (calendarClose) {
+    calendarClose.addEventListener('click', closeCalendarModal);
+  }
+  if (calendarModal) {
+    calendarModal.addEventListener('click', (e) => {
+      if (e.target === calendarModal) closeCalendarModal();
+    });
+  }
   
   // Render views
   populateDistrictDropdown();
@@ -187,12 +220,37 @@ function updateMonthlyCalendarLink() {
   
   const linkEl = document.getElementById('monthlyCalendarLink');
   const textEl = document.getElementById('calendarLinkText');
+  const bottomTitleEl = document.getElementById('bottomCalendarCardTitle');
+  const modalHeaderTitle = document.getElementById('calendarModalHeaderTitle');
+  const modalExtLink = document.getElementById('calendarModalExtLink');
   
   if (linkEl) {
     linkEl.href = url;
   }
   if (textEl) {
     textEl.textContent = `${minguoYear}年${month}月行事曆`;
+  }
+  if (bottomTitleEl) {
+    bottomTitleEl.textContent = `${minguoYear}年${month}月 活動行事曆`;
+  }
+  if (modalHeaderTitle) {
+    modalHeaderTitle.textContent = `📅 楊梅四維親子館 • ${minguoYear}年${month}月活動行事曆`;
+  }
+  if (modalExtLink) {
+    modalExtLink.href = url;
+  }
+}
+
+// Calendar Modal open/close functions
+function openCalendarModal() {
+  if (calendarModal) {
+    calendarModal.classList.add('open');
+  }
+}
+
+function closeCalendarModal() {
+  if (calendarModal) {
+    calendarModal.classList.remove('open');
   }
 }
 

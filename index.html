@@ -130,7 +130,126 @@
         </div>
       </section>
 
+      <!-- Bottom Section: Monthly Timetable & Notice Card (畫面置底) -->
+      <section class="card calendar-bottom-card" id="calendarBottomCard">
+        <div class="calendar-card-header">
+          <div class="calendar-card-title">
+            <span>📅</span> <span id="bottomCalendarCardTitle">本月活動行事曆</span>
+          </div>
+          <button type="button" class="btn-open-calendar" id="btnOpenCalendarModal">
+            查看課表 🔍
+          </button>
+        </div>
+        <div class="calendar-card-preview-strip">
+          <div class="preview-thumb-wrap">
+            <img src="https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f873799c.jpg" alt="當月課表預覽" class="preview-thumb" id="previewThumbImg">
+            <div class="preview-badge-row">
+              <span class="preview-badge">✨ 免跳轉！點擊彈窗查看完整課表大圖與活動說明</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
+
+    <!-- Monthly Calendar In-App Modal (免跳轉彈窗) -->
+    <div class="modal-overlay" id="calendarModal">
+      <div class="modal-content calendar-modal-content">
+        
+        <div class="modal-header">
+          <h2 id="calendarModalHeaderTitle">📅 當月活動行事曆</h2>
+          <button type="button" class="btn-modal-close" id="calendarClose">✕</button>
+        </div>
+        
+        <div class="calendar-modal-scroll">
+          
+          <!-- 1. 圖片先放 (Calendar Images First) -->
+          <div class="calendar-section-block">
+            <div class="section-badge-title">
+              <span>🖼️</span> 活動課表大圖（可點擊放大瀏覽）
+            </div>
+            <div class="calendar-images-list" id="calendarImagesList">
+              <a href="https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f873799c.jpg" target="_blank" rel="noopener noreferrer" class="calendar-img-link" title="點擊檢視高畫質大圖">
+                <img src="https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f873799c.jpg" alt="8月份活動行事曆 (課表 1)" class="calendar-full-img" loading="lazy">
+                <span class="img-zoom-tip">🔍 點擊開新分頁看原圖</span>
+              </a>
+              <a href="https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f86eaaba.jpg" target="_blank" rel="noopener noreferrer" class="calendar-img-link" title="點擊檢視高畫質大圖">
+                <img src="https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f86eaaba.jpg" alt="8月份活動行事曆 (課表 2)" class="calendar-full-img" loading="lazy">
+                <span class="img-zoom-tip">🔍 點擊開新分頁看原圖</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- 2. 文字放在圖片下方 (Announcement Text Details Below Images) -->
+          <div class="calendar-section-block">
+            <div class="section-badge-title">
+              <span>📝</span> 詳細活動分齡與入館公告
+            </div>
+            <div class="calendar-text-box" id="calendarTextBox">
+              <!-- Dynamically populated or default formatted content -->
+              <div class="calendar-announcement-card">
+                <h3 class="announcement-title">楊梅四維親子館 • 115年8月份活動行事曆 ☄️📅</h3>
+                <p class="announcement-greeting">各位大朋友、小朋友們好 ! 👋🏻<br>四維親子館 8 月份活動行事曆出爐囉 ! 歡迎各位家長帶著寶貝一同入館遊憩、參與活動 🥳</p>
+                
+                <div class="announcement-group">
+                  <div class="group-title">👶 活動類型與參與年齡</div>
+                  <ul class="activity-age-list">
+                    <li><span class="act-name">奇幻探索屋</span><span class="act-age">4m - 12m</span></li>
+                    <li><span class="act-name">小手繪宇宙</span><span class="act-age">1y0m - 2y0m</span></li>
+                    <li><span class="act-name">繪本星球</span><span class="act-age">2y0m - 學齡前</span></li>
+                    <li><span class="act-name">奇異創作家</span><span class="act-age">2y0m - 學齡前</span></li>
+                    <li><span class="act-name">黑魔法廚房</span><span class="act-age">2y0m - 學齡前</span></li>
+                    <li><span class="act-name">舞動小精靈</span><span class="act-age">0y - 學齡前</span></li>
+                    <li><span class="act-name">外展活動</span><span class="act-age">0y - 學齡前</span></li>
+                    <li><span class="act-name">親子活動</span><span class="act-age">依活動類型而定</span></li>
+                  </ul>
+                </div>
+
+                <div class="announcement-group">
+                  <div class="group-title">⏰ 入館與活動時段</div>
+                  <div class="time-slot-card">
+                    <strong>🏡 自由入館遊憩</strong>（網路 25 組、現場 10 組，開館 15 分鐘內報到）
+                    <div>▫️ 上午：09:00 - 12:00</div>
+                    <div>▫️ 下午：14:00 - 17:00</div>
+                  </div>
+                  <div class="time-slot-card" style="margin-top: 6px;">
+                    <strong>🎨 親子活動</strong>（網路 4 組、現場 2 組，活動前 15 分鐘報到）
+                    <div>▫️ 上午：10:00 - 10:30</div>
+                    <div>▫️ 下午：15:00 - 15:30</div>
+                    <small style="color: var(--text-muted);">💡 舞動小精靈採全現場報名</small>
+                  </div>
+                </div>
+
+                <div class="announcement-group">
+                  <div class="group-title">☄️ 報名方式與入館須知</div>
+                  <ul class="rule-list">
+                    <li><strong>網路預約：</strong>活動前 14 天開放預約（至桃園育兒資源網）。</li>
+                    <li><strong>現場名額：</strong>活動當日該場次現場開放排隊報名。</li>
+                    <li><strong>對象：</strong>0-6 歲學齡前幼兒（未上小學），需家長陪同，無托育服務。</li>
+                    <li><strong>服裝：</strong>成人請穿著襪子入場，幼兒可穿可不穿。</li>
+                    <li><strong>取消與記點：</strong>如需取消請提早上網或來電；預約逾時未到將記「無故未到」一次並視同放棄。</li>
+                    <li><strong>飲食：</strong>館內禁止飲食，飲水請自備水杯。</li>
+                  </ul>
+                  <div class="contact-phone-badge">
+                    📞 洽詢電話：<a href="tel:034822207">03-482-2207</a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom External Link -->
+          <div class="calendar-modal-footer">
+            <a href="https://babycare.tycg.gov.tw//#/search?keyword=楊梅四維親子館%20·%20115年8月活動行事曆" target="_blank" rel="noopener noreferrer" class="btn-ext-calendar" id="calendarModalExtLink">
+              🌐 開啟桃園育兒資源網官方搜尋頁 ↗
+            </a>
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
 
     <!-- Settings Modal -->
     <div class="modal-overlay" id="settingsModal">
