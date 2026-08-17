@@ -123,6 +123,112 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+// Facebook Closure Posts Dataset (Top 3 Posts from FB Search)
+const FB_CLOSURE_POSTS = [
+  {
+    id: "post_1",
+    author: "台灣玩具圖書館",
+    authorTag: "營運總部 / 四維等據點",
+    date: "07/11 (六)",
+    badgeType: "typhoon",
+    badgeText: "🌀 颱風停班課休館",
+    title: "【 🌀 巴威颱風來襲休館公告 】",
+    highlights: [
+      "因應 07/11 桃園市停班停課一天，全館臨時休館 1 天",
+      "風強雨大在家防颱，捐玩具、做志工與入館遊憩先緩緩",
+      "楊梅四維親子館、平鎮親子館、桃園物流中心等據點同步暫停服務"
+    ],
+    fullContent: `【 🌀 巴威颱風來襲休館公告 】
+展開內文看更多 #玩圖據點資訊
+
+因應 07/11 桃園市停班停課一天
+桃園總部物流中心將臨時休館 1 天
+風強雨大 我們在家好好防颱
+捐玩具、做志工都先緩緩喔～
+
+若有捐贈、志工、合作等相關問題
+歡迎善加利用我們的 FB / email 詢問
+我們將於上班日盡快回覆
+感謝大家的體諒！
+
+#服務時間異動：
+桃園總部物流中心 (桃園市楊梅區中興路133號) 07/11 (六) 休館
+
+| 查詢全台各館舍休館時間 |
+北部：
+<桃園>
+桃園總部物流中心 @台灣玩具圖書館
+共享園區實驗據點 玩具藏寶箱/玩具盒子修惜站
+平鎮親子館
+楊梅四維親子館
+復興行動親子車
+<雙北>
+新北市玩具銀行
+臺北玩具轉運站
+
+中部：
+<台中> 臺中市大雅國小玩具圖書館
+<彰化> Formosa玩具基地
+
+南部：
+台灣玩具圖書館-高雄玩具碼頭
+
+東部：
+玩具圖書館-花蓮東華玩具樂園物流中心`,
+    link: "https://www.facebook.com/profile/61570213655087/search/?q=休館"
+  },
+  {
+    id: "post_2",
+    author: "楊梅四維親子館",
+    authorTag: "官方粉專",
+    date: "07/28 (二) - 07/29 (三)",
+    badgeType: "disinfect",
+    badgeText: "🧴 消毒日休館",
+    title: "【楊梅四維親子館 • 7月份休館公告】",
+    highlights: [
+      "07/28 (二) 至 07/29 (三) 全日進行環境深度清潔消毒作業",
+      "消毒期間暫停開放入館與各項親子課程，請家長留意避免白跑",
+      "如有入館疑問請洽詢楊梅四維親子館專線：03-4822207"
+    ],
+    fullContent: `【楊梅四維親子館 • 7月份休館公告】
+
+07/28 (二) - 07/29 (三) 消毒日休館
+
+煩請家長留意，不要白跑一趟囉!
+造成不便敬請見諒
+如有疑問請洽楊梅四維親子館 03-4822207`,
+    link: "https://www.facebook.com/profile/61570213655087/search/?q=休館"
+  },
+  {
+    id: "post_3",
+    author: "楊梅四維親子館",
+    authorTag: "官方粉專",
+    date: "115/07/11 (六)",
+    badgeType: "special",
+    badgeText: "⚠️ 臨時休館與活動取消",
+    title: "【楊梅四維親子館 • 臨時休館公告】",
+    highlights: [
+      "因巴威颱風來襲市府發佈停班停課，115/07/11 (六) 本館休館一日",
+      "外展活動（楊梅故事園區）、奇異創作家（登登！星球任務站）取消辦理",
+      "圖書教玩具借閱服務暫停一次，颱風天請家長幼兒安心待在家防颱"
+    ],
+    fullContent: `【楊梅四維親子館 • 臨時休館公告】
+
+因巴威颱風來襲
+桃園市政府發佈停班停課
+
+115/07/11 (六) 本館休館一日
+明日 外展活動 • 楊梅故事園區、親子活動 奇異創作家 • 登登！星球任務站 #取消辦理
+圖書教玩具借閱服務暫停一次
+
+造成不便敬請見諒
+請親子們留意，不要白跑一趟喲!
+
+#颱風風雨大 #大家要乖乖待在家裡哦`,
+    link: "https://www.facebook.com/profile/61570213655087/search/?q=休館"
+  }
+];
+
 // DOM elements
 const settingsModal = document.getElementById('settingsModal');
 const settingsTrigger = document.getElementById('settingsTrigger');
@@ -140,6 +246,14 @@ const calendarClose = document.getElementById('calendarClose');
 const btnOpenCalendarModal = document.getElementById('btnOpenCalendarModal');
 const calendarBottomCard = document.getElementById('calendarBottomCard');
 const monthlyCalendarLink = document.getElementById('monthlyCalendarLink');
+
+// FB Closure Notice DOM elements
+const closureModal = document.getElementById('closureModal');
+const closureClose = document.getElementById('closureClose');
+const btnOpenClosureModal = document.getElementById('btnOpenClosureModal');
+const btnTopClosureNotice = document.getElementById('btnTopClosureNotice');
+const closurePostsPreviewList = document.getElementById('closurePostsPreviewList');
+const closureFullPostsList = document.getElementById('closureFullPostsList');
 
 
 
@@ -198,17 +312,134 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === calendarModal) closeCalendarModal();
     });
   }
+
+  // Closure Modal triggers
+  if (btnTopClosureNotice) {
+    btnTopClosureNotice.addEventListener('click', (e) => {
+      e.preventDefault();
+      openClosureModal();
+    });
+  }
+  if (btnOpenClosureModal) {
+    btnOpenClosureModal.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openClosureModal();
+    });
+  }
+  if (closureClose) {
+    closureClose.addEventListener('click', closeClosureModal);
+  }
+  if (closureModal) {
+    closureModal.addEventListener('click', (e) => {
+      if (e.target === closureModal) closeClosureModal();
+    });
+  }
   
   // Render views
   populateDistrictDropdown();
   renderProfileSummary();
   updateMonthlyCalendarLink();
+  renderClosurePosts();
   
   // If the profile is fresh (names are empty), open settings automatically
   if (!currentProfile.parents.dadName && !currentProfile.parents.momName && !currentProfile.parents.grandpaName && !currentProfile.parents.grandmaName) {
     setTimeout(openSettings, 300);
   }
 });
+
+// Render Closure Posts on both Card and Modal
+function renderClosurePosts() {
+  if (closurePostsPreviewList) {
+    closurePostsPreviewList.innerHTML = '';
+    FB_CLOSURE_POSTS.forEach((post) => {
+      const item = document.createElement('div');
+      item.className = 'closure-post-item';
+      
+      const highlightsHtml = post.highlights.map(h => `
+        <li class="closure-highlight-row">
+          <span class="bullet">▫️</span>
+          <span>${h}</span>
+        </li>
+      `).join('');
+
+      item.innerHTML = `
+        <div class="closure-item-header">
+          <div class="closure-item-meta">
+            <span class="closure-badge ${post.badgeType}">${post.badgeText}</span>
+            <span class="closure-item-author">${post.author}</span>
+          </div>
+          <span class="closure-item-date">${post.date}</span>
+        </div>
+        <div class="closure-item-title">${post.title}</div>
+        <ul class="closure-highlights">
+          ${highlightsHtml}
+        </ul>
+        <div class="closure-card-actions">
+          <button type="button" class="btn-toggle-post-body" onclick="togglePostFullText('${post.id}', this)">
+            <span class="toggle-icon">🔽</span> 展開貼文全文
+          </button>
+        </div>
+        <div class="closure-post-fulltext" id="fullText_${post.id}">
+          ${post.fullContent}
+        </div>
+      `;
+      closurePostsPreviewList.appendChild(item);
+    });
+  }
+
+  if (closureFullPostsList) {
+    closureFullPostsList.innerHTML = '';
+    FB_CLOSURE_POSTS.forEach((post) => {
+      const card = document.createElement('div');
+      card.className = 'closure-modal-post-card';
+      
+      card.innerHTML = `
+        <div class="closure-modal-post-header">
+          <div class="closure-item-meta">
+            <span class="closure-badge ${post.badgeType}">${post.badgeText}</span>
+            <span class="closure-item-author">${post.author} (${post.authorTag})</span>
+          </div>
+          <span class="closure-item-date">${post.date}</span>
+        </div>
+        <div class="closure-modal-post-title">${post.title}</div>
+        <div class="closure-modal-post-body">${post.fullContent}</div>
+      `;
+      closureFullPostsList.appendChild(card);
+    });
+  }
+}
+
+// Toggle inline post full text accordion
+window.togglePostFullText = function(postId, btnEl) {
+  const fullTextEl = document.getElementById(`fullText_${postId}`);
+  if (!fullTextEl) return;
+  
+  const isOpen = fullTextEl.classList.contains('open');
+  if (isOpen) {
+    fullTextEl.classList.remove('open');
+    if (btnEl) {
+      btnEl.innerHTML = '<span class="toggle-icon">🔽</span> 展開貼文全文';
+    }
+  } else {
+    fullTextEl.classList.add('open');
+    if (btnEl) {
+      btnEl.innerHTML = '<span class="toggle-icon">🔼</span> 收合貼文全文';
+    }
+  }
+};
+
+// Closure Modal open/close functions
+function openClosureModal() {
+  if (closureModal) {
+    closureModal.classList.add('open');
+  }
+}
+
+function closeClosureModal() {
+  if (closureModal) {
+    closureModal.classList.remove('open');
+  }
+}
 
 // Update dynamic monthly calendar link (Taoyuan Babycare Search)
 function updateMonthlyCalendarLink() {

@@ -55,18 +55,44 @@
         </div>
         <div class="notice-divider"></div>
         <div class="notice-links-row">
-          <a href="#" target="_blank" rel="noopener noreferrer" class="notice-news-link" id="monthlyCalendarLink">
+          <a href="#" class="notice-news-link" id="monthlyCalendarLink">
             <div class="notice-news-left">
               <span class="notice-icon">📅</span>
-              <span class="notice-news-title">最新消息</span>
+              <span class="notice-news-title">活動課表</span>
             </div>
             <span class="notice-link-btn">
-              <span id="calendarLinkText">本月活動行事曆</span> <span class="arrow">↗</span>
+              <span id="calendarLinkText">本月行事曆</span> <span class="arrow">↗</span>
             </span>
           </a>
-          <a href="https://www.facebook.com/ymswpcc/photos?locale=zh_TW" target="_blank" rel="noopener noreferrer" class="notice-fb-sublink" title="前往四維親子館 FB 粉專">
+          <button type="button" class="notice-closure-link" id="btnTopClosureNotice" title="查看最新 FB 休館公告">
+            <span class="notice-icon">📢</span>
+            <span class="notice-closure-text">休館公告</span>
+            <span class="notice-badge-num">3則</span>
+          </button>
+          <a href="https://www.facebook.com/profile/61570213655087/search/?q=休館" target="_blank" rel="noopener noreferrer" class="notice-fb-sublink" title="前往四維親子館 FB 官方搜尋頁">
             <span>FB</span> ↗
           </a>
+        </div>
+      </section>
+
+      <!-- Facebook Closure Notices Card (FB 最新前 3 筆休館貼文 - 直接在 PWA 內瀏覽) -->
+      <section class="card closure-card" id="closureSectionCard">
+        <div class="closure-card-header">
+          <div class="closure-card-title">
+            <span class="closure-bell-icon">📢</span>
+            <div class="closure-title-text">
+              <span class="closure-main-title">FB 休館與異動公告</span>
+              <span class="closure-sub-badge">最新 3 則貼文</span>
+            </div>
+          </div>
+          <button type="button" class="btn-open-closure-modal" id="btnOpenClosureModal" title="展開完整休館公告彈窗">
+            詳細內容 🔍
+          </button>
+        </div>
+
+        <div class="closure-posts-preview-list" id="closurePostsPreviewList">
+          <!-- Dynamically populated by app.js -->
+          <div class="closure-loading-state">載入 FB 休館貼文中...</div>
         </div>
       </section>
 
@@ -151,6 +177,56 @@
       </section>
 
     </main>
+
+    <!-- Facebook Closure Notices In-App Modal (免跳轉休館彈窗) -->
+    <div class="modal-overlay" id="closureModal">
+      <div class="modal-content closure-modal-content">
+        
+        <div class="modal-header">
+          <div class="modal-header-left">
+            <span class="modal-header-icon">📢</span>
+            <h2>FB 休館與異動貼文 (前3筆)</h2>
+          </div>
+          <button type="button" class="btn-modal-close" id="closureClose">✕</button>
+        </div>
+        
+        <div class="closure-modal-scroll" id="closureModalScroll">
+          
+          <div class="closure-modal-banner">
+            <div class="closure-modal-banner-icon">✨</div>
+            <div class="closure-modal-banner-text">
+              <strong>免跳轉！直接在 PWA 瀏覽最新 3 筆 FB 官方休館貼文</strong>
+              <span>包含颱風天候異動、全館消毒清潔及各項活動因應規範</span>
+            </div>
+          </div>
+
+          <div class="closure-full-posts-list" id="closureFullPostsList">
+            <!-- Dynamically populated by app.js -->
+          </div>
+
+          <!-- Phone contact box -->
+          <div class="closure-phone-box">
+            <div class="phone-box-header">
+              <span class="phone-box-icon">📞</span>
+              <strong>臨時開館狀況諮詢專線</strong>
+            </div>
+            <p>如需進一步確認即時入館或課程預約狀況，可直接來電：</p>
+            <a href="tel:034822207" class="btn-direct-call">
+              📞 撥打楊梅四維親子館：(03) 482-2207
+            </a>
+          </div>
+
+          <!-- Bottom External Link -->
+          <div class="closure-modal-footer">
+            <a href="https://www.facebook.com/profile/61570213655087/search/?q=休館" target="_blank" rel="noopener noreferrer" class="btn-ext-closure" id="closureModalExtLink">
+              🌐 開啟 Facebook 原始搜尋貼文頁 ↗
+            </a>
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
 
     <!-- Monthly Calendar In-App Modal (免跳轉彈窗) -->
     <div class="modal-overlay" id="calendarModal">
