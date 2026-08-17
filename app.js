@@ -342,7 +342,9 @@ document.addEventListener('DOMContentLoaded', () => {
   populateDistrictDropdown();
   renderProfileSummary();
   updateMonthlyCalendarLink();
-  renderClosurePosts();
+  
+  // Load & sync latest announcements (Calendar & FB Closure notices)
+  fetchLatestAnnouncements();
   
   // If the profile is fresh (names are empty), open settings automatically
   if (!currentProfile.parents.dadName && !currentProfile.parents.momName && !currentProfile.parents.grandpaName && !currentProfile.parents.grandmaName) {
@@ -350,20 +352,148 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Fetch latest announcements from data/announcements.json with cache fallback
+async function fetchLatestAnnouncements() {
+  // First, check if we have cached announcements in localStorage
+  let cachedData = null;
+  try {
+    const localSaved = localStorage.getItem('parenting_announcements');
+    if (localSaved) {
+      cachedData = JSON.parse(localSaved);
+      applyAnnouncementsData(cachedData);
+    } else {
+      // Use default bundled data
+      renderClosurePosts(FB_CLOSURE_POSTS);
+    }
+  } catch (err) {
+    renderClosurePosts(FB_CLOSURE_POSTS);
+  }
+
+  // Next, fetch the latest live JSON from GitHub with cache-busting timestamp
+  try {
+    const response = await fetch(`./data/announcements.json?t=${Date.now()}`);
+    if (response.ok) {
+      const liveData = await response.json();
+      localStorage.setItem('parenting_announcements', JSON.stringify(liveData));
+      applyAnnouncementsData(liveData);
+      console.log('[Live Sync] Successfully updated announcements from GitHub Actions feed:', liveData.updatedAt);
+    }
+  } catch (fetchErr) {
+    console.log('[Live Sync] Using offline cached announcements:', fetchErr);
+  }
+}
+
+// Apply announcements data to UI modals
+function applyAnnouncementsData(data) {
+  if (!data) return;
+
+  if (data.calendar) {
+    renderCalendarModal(data.calendar);
+  }
+  if (data.closures && Array.isArray(data.closures)) {
+    renderClosurePosts(data.closures);
+  }
+}
+
+// Render dynamic Calendar modal content
+function renderCalendarModal(calendarData) {
+  if (!calendarData) return;
+
+  const imagesContainer = document.getElementById('calendarImagesList');
+  const textBoxContainer = document.getElementById('calendarTextBox');
+  const textEl = document.getElementById('calendarLinkText');
+  const modalHeaderTitle = document.getElementById('calendarModalHeaderTitle');
+  const modalExtLink = document.getElementById('calendarModalExtLink');
+  const monthlyLink = document.getElementById('monthlyCalendarLink');
+
+  if (textEl && calendarData.year && calendarData.month) {
+    textEl.textContent = `${calendarData.year}年${calendarData.month}月行事曆`;
+  }
+  if (modalHeaderTitle && calendarData.title) {
+    modalHeaderTitle.textContent = `📅 ${calendarData.title}`;
+  }
+  if (modalExtLink && calendarData.searchUrl) {
+    modalExtLink.href = calendarData.searchUrl;
+  }
+  if (monthlyLink && calendarData.searchUrl) {
+    monthlyLink.href = calendarData.searchUrl;
+  }
+
+  // Render Calendar Images
+  if (imagesContainer && Array.isArray(calendarData.images) && calendarData.images.length > 0) {
+    imagesContainer.innerHTML = calendarData.images.map(img => `
+      <a href="${img.url}" target="_blank" rel="noopener noreferrer" class="calendar-img-link" title="點擊檢視高畫質大圖">
+        <img src="${img.url}" alt="${img.alt || '活動行事曆'}" class="calendar-full-img" loading="lazy">
+        <span class="img-zoom-tip">🔍 點擊開新分頁看原圖</span>
+      </a>
+    `).join('');
+  }
+
+  // Render Announcement Text Box
+  if (textBoxContainer) {
+    const activitiesHtml = Array.isArray(calendarData.activities) ? calendarData.activities.map(act => `
+      <li><span class="act-name">${act.name}</span><span class="act-age">${act.age}</span></li>
+    `).join('') : '';
+
+    const timeSlotsHtml = Array.isArray(calendarData.timeSlots) ? calendarData.timeSlots.map((ts, idx) => `
+      <div class="time-slot-card" style="${idx > 0 ? 'margin-top: 6px;' : ''}">
+        <strong>${ts.category === '自由入館遊憩' ? '🏡' : '🎨'} ${ts.category}</strong>（${ts.quota}）
+        ${ts.slots.map(s => `<div>▫️ ${s}</div>`).join('')}
+        ${ts.note ? `<small style="color: var(--text-muted);">${ts.note}</small>` : ''}
+      </div>
+    `).join('') : '';
+
+    const rulesHtml = Array.isArray(calendarData.rules) ? calendarData.rules.map(r => `
+      <li>${r}</li>
+    `).join('') : '';
+
+    textBoxContainer.innerHTML = `
+      <div class="calendar-announcement-card">
+        <h3 class="announcement-title">${calendarData.title}</h3>
+        <p class="announcement-greeting">${(calendarData.greeting || '').replace(/\n/g, '<br>')}</p>
+        
+        <div class="announcement-group">
+          <div class="group-title">👶 活動類型與參與年齡</div>
+          <ul class="activity-age-list">
+            ${activitiesHtml}
+          </ul>
+        </div>
+
+        <div class="announcement-group">
+          <div class="group-title">⏰ 入館與活動時段</div>
+          ${timeSlotsHtml}
+        </div>
+
+        <div class="announcement-group">
+          <div class="group-title">☄️ 報名方式與入館須知</div>
+          <ul class="rule-list">
+            ${rulesHtml}
+          </ul>
+          <div class="contact-phone-badge">
+            📞 洽詢電話：<a href="tel:${calendarData.phone || '034822207'}">${calendarData.phone || '03-482-2207'}</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
 // Render Closure Posts on both Card and Modal
-function renderClosurePosts() {
+function renderClosurePosts(postsList = FB_CLOSURE_POSTS) {
+  const currentList = Array.isArray(postsList) && postsList.length > 0 ? postsList : FB_CLOSURE_POSTS;
+
   if (closurePostsPreviewList) {
     closurePostsPreviewList.innerHTML = '';
-    FB_CLOSURE_POSTS.forEach((post) => {
+    currentList.forEach((post) => {
       const item = document.createElement('div');
       item.className = 'closure-post-item';
       
-      const highlightsHtml = post.highlights.map(h => `
+      const highlightsHtml = Array.isArray(post.highlights) ? post.highlights.map(h => `
         <li class="closure-highlight-row">
           <span class="bullet">▫️</span>
           <span>${h}</span>
         </li>
-      `).join('');
+      `).join('') : '';
 
       item.innerHTML = `
         <div class="closure-item-header">
@@ -392,7 +522,7 @@ function renderClosurePosts() {
 
   if (closureFullPostsList) {
     closureFullPostsList.innerHTML = '';
-    FB_CLOSURE_POSTS.forEach((post) => {
+    currentList.forEach((post) => {
       const card = document.createElement('div');
       card.className = 'closure-modal-post-card';
       
@@ -400,7 +530,7 @@ function renderClosurePosts() {
         <div class="closure-modal-post-header">
           <div class="closure-item-meta">
             <span class="closure-badge ${post.badgeType}">${post.badgeText}</span>
-            <span class="closure-item-author">${post.author} (${post.authorTag})</span>
+            <span class="closure-item-author">${post.author} (${post.authorTag || '官方粉專'})</span>
           </div>
           <span class="closure-item-date">${post.date}</span>
         </div>

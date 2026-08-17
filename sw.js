@@ -1,10 +1,11 @@
-const CACHE_NAME = 'parenting-prefiller-v16';
+const CACHE_NAME = 'parenting-prefiller-v17';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './app.js',
   './manifest.json',
+  './data/announcements.json',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ];
