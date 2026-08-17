@@ -109,7 +109,10 @@ let currentProfile = loadStoredProfile();
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('Service Worker registered successfully'))
+      .then(reg => {
+        console.log('Service Worker registered successfully');
+        reg.update(); // Trigger immediate update check
+      })
       .catch(err => console.log('Service Worker registration failed', err));
   });
 
