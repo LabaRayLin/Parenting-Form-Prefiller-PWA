@@ -40,6 +40,7 @@ def load_existing_data():
     return {}
 
 
+<<<<<<< HEAD
 def fetch_monthly_calendar_from_api(minguo_year, month):
     """
     Search and fetch the live monthly calendar for Yangmei Siwei Parent-Child Center
@@ -197,12 +198,34 @@ def fetch_monthly_calendar(minguo_year, month, existing_calendar):
     if existing_calendar.get("month") != month:
         calendar_images = default_images
     
+=======
+def fetch_monthly_calendar(minguo_year, month, existing_calendar):
+    """
+    Search and fetch the latest monthly calendar for Yangmei Siwei Parent-Child Center.
+    """
+    keyword = f"楊梅四維親子館 · {minguo_year}年{month}月活動行事曆"
+    search_url = f"https://babycare.tycg.gov.tw//#/search?keyword={urllib.parse.quote(keyword)}"
+    
+>>>>>>> d12267bfdae4b7e6f2ccb3cbb624b417d5f6c769
     calendar_data = {
         "title": f"楊梅四維親子館 • {minguo_year}年{month}月份活動行事曆 ☄️📅",
         "year": minguo_year,
         "month": month,
         "greeting": f"各位大朋友、小朋友們好 ! 👋🏻\n四維親子館 {month} 月份活動行事曆出爐囉 ! 歡迎各位家長帶著寶貝一同入館遊憩、參與活動 🥳",
+<<<<<<< HEAD
         "images": calendar_images,
+=======
+        "images": existing_calendar.get("images", [
+            {
+                "url": "https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f873799c.jpg",
+                "alt": f"{month}月份活動行事曆 (課表 1)"
+            },
+            {
+                "url": "https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f86eaaba.jpg",
+                "alt": f"{month}月份活動行事曆 (課表 2)"
+            }
+        ]),
+>>>>>>> d12267bfdae4b7e6f2ccb3cbb624b417d5f6c769
         "activities": [
             { "name": "奇幻探索屋", "age": "4m - 12m" },
             { "name": "小手繪宇宙", "age": "1y0m - 2y0m" },

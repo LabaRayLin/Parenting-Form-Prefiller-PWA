@@ -406,6 +406,7 @@ function renderCalendarModal(calendarData) {
   const modalExtLink = document.getElementById('calendarModalExtLink');
   const monthlyLink = document.getElementById('monthlyCalendarLink');
 
+<<<<<<< HEAD
   const bottomTitleEl = document.getElementById('bottomCalendarCardTitle');
 
   if (textEl && calendarData.year && calendarData.month) {
@@ -414,6 +415,11 @@ function renderCalendarModal(calendarData) {
   if (bottomTitleEl && calendarData.year && calendarData.month) {
     bottomTitleEl.textContent = `${calendarData.year}年${calendarData.month}月 活動行事曆`;
   }
+=======
+  if (textEl && calendarData.year && calendarData.month) {
+    textEl.textContent = `${calendarData.year}年${calendarData.month}月行事曆`;
+  }
+>>>>>>> d12267bfdae4b7e6f2ccb3cbb624b417d5f6c769
   if (modalHeaderTitle && calendarData.title) {
     modalHeaderTitle.textContent = `📅 ${calendarData.title}`;
   }

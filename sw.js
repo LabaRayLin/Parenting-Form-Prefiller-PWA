@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const CACHE_NAME = 'parenting-prefiller-v18';
+=======
+const CACHE_NAME = 'parenting-prefiller-v17';
+>>>>>>> d12267bfdae4b7e6f2ccb3cbb624b417d5f6c769
 const ASSETS = [
   './',
   './index.html',
