@@ -1,33 +1,18 @@
 {
-<<<<<<< HEAD
   "updatedAt": "2026-09-05T13:55:04.792135+08:00",
   "calendar": {
     "title": "楊梅四維親子館 · 115年9月活動行事曆 ☄️📅",
-=======
-  "updatedAt": "2026-09-05T11:35:28.820401+08:00",
-  "calendar": {
-    "title": "楊梅四維親子館 • 115年9月份活動行事曆 ☄️📅",
->>>>>>> d12267bfdae4b7e6f2ccb3cbb624b417d5f6c769
     "year": 115,
     "month": 9,
     "greeting": "各位大朋友、小朋友們好 ! 👋🏻\n四維親子館 9 月份活動行事曆出爐囉 ! 歡迎各位家長帶著寶貝一同入館遊憩、參與活動 🥳",
     "images": [
       {
-<<<<<<< HEAD
         "url": "https://babycarems.tycg.gov.tw/files/PC/NEWS/d2098d98-2bb4-4a1a-b6be-c1e0f45530f3/56ca0e25.jpg",
         "alt": "9月份活動行事曆 (課表 1)"
       },
       {
         "url": "https://babycarems.tycg.gov.tw/files/PC/NEWS/d2098d98-2bb4-4a1a-b6be-c1e0f45530f3/100dd33f.jpg",
         "alt": "9月份活動行事曆 (課表 2)"
-=======
-        "url": "https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f873799c.jpg",
-        "alt": "8月份活動行事曆 (課表 1)"
-      },
-      {
-        "url": "https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f86eaaba.jpg",
-        "alt": "8月份活動行事曆 (課表 2)"
->>>>>>> d12267bfdae4b7e6f2ccb3cbb624b417d5f6c769
       }
     ],
     "activities": [
