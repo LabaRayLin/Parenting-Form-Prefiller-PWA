@@ -109,7 +109,10 @@ let currentProfile = loadStoredProfile();
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('Service Worker registered successfully'))
+      .then(reg => {
+        console.log('Service Worker registered successfully');
+        reg.update(); // Trigger immediate update check
+      })
       .catch(err => console.log('Service Worker registration failed', err));
   });
 
@@ -122,6 +125,112 @@ if ('serviceWorker' in navigator) {
     }
   });
 }
+
+// Facebook Closure Posts Dataset (Top 3 Posts from FB Search)
+const FB_CLOSURE_POSTS = [
+  {
+    id: "post_1",
+    author: "台灣玩具圖書館",
+    authorTag: "營運總部 / 四維等據點",
+    date: "07/11 (六)",
+    badgeType: "typhoon",
+    badgeText: "🌀 颱風停班課休館",
+    title: "【 🌀 巴威颱風來襲休館公告 】",
+    highlights: [
+      "因應 07/11 桃園市停班停課一天，全館臨時休館 1 天",
+      "風強雨大在家防颱，捐玩具、做志工與入館遊憩先緩緩",
+      "楊梅四維親子館、平鎮親子館、桃園物流中心等據點同步暫停服務"
+    ],
+    fullContent: `【 🌀 巴威颱風來襲休館公告 】
+展開內文看更多 #玩圖據點資訊
+
+因應 07/11 桃園市停班停課一天
+桃園總部物流中心將臨時休館 1 天
+風強雨大 我們在家好好防颱
+捐玩具、做志工都先緩緩喔～
+
+若有捐贈、志工、合作等相關問題
+歡迎善加利用我們的 FB / email 詢問
+我們將於上班日盡快回覆
+感謝大家的體諒！
+
+#服務時間異動：
+桃園總部物流中心 (桃園市楊梅區中興路133號) 07/11 (六) 休館
+
+| 查詢全台各館舍休館時間 |
+北部：
+<桃園>
+桃園總部物流中心 @台灣玩具圖書館
+共享園區實驗據點 玩具藏寶箱/玩具盒子修惜站
+平鎮親子館
+楊梅四維親子館
+復興行動親子車
+<雙北>
+新北市玩具銀行
+臺北玩具轉運站
+
+中部：
+<台中> 臺中市大雅國小玩具圖書館
+<彰化> Formosa玩具基地
+
+南部：
+台灣玩具圖書館-高雄玩具碼頭
+
+東部：
+玩具圖書館-花蓮東華玩具樂園物流中心`,
+    link: "https://www.facebook.com/profile/61570213655087/search/?q=休館"
+  },
+  {
+    id: "post_2",
+    author: "楊梅四維親子館",
+    authorTag: "官方粉專",
+    date: "07/28 (二) - 07/29 (三)",
+    badgeType: "disinfect",
+    badgeText: "🧴 消毒日休館",
+    title: "【楊梅四維親子館 • 7月份休館公告】",
+    highlights: [
+      "07/28 (二) 至 07/29 (三) 全日進行環境深度清潔消毒作業",
+      "消毒期間暫停開放入館與各項親子課程，請家長留意避免白跑",
+      "如有入館疑問請洽詢楊梅四維親子館專線：03-4822207"
+    ],
+    fullContent: `【楊梅四維親子館 • 7月份休館公告】
+
+07/28 (二) - 07/29 (三) 消毒日休館
+
+煩請家長留意，不要白跑一趟囉!
+造成不便敬請見諒
+如有疑問請洽楊梅四維親子館 03-4822207`,
+    link: "https://www.facebook.com/profile/61570213655087/search/?q=休館"
+  },
+  {
+    id: "post_3",
+    author: "楊梅四維親子館",
+    authorTag: "官方粉專",
+    date: "115/07/11 (六)",
+    badgeType: "special",
+    badgeText: "⚠️ 臨時休館與活動取消",
+    title: "【楊梅四維親子館 • 臨時休館公告】",
+    highlights: [
+      "因巴威颱風來襲市府發佈停班停課，115/07/11 (六) 本館休館一日",
+      "外展活動（楊梅故事園區）、奇異創作家（登登！星球任務站）取消辦理",
+      "圖書教玩具借閱服務暫停一次，颱風天請家長幼兒安心待在家防颱"
+    ],
+    fullContent: `【楊梅四維親子館 • 臨時休館公告】
+
+因巴威颱風來襲
+桃園市政府發佈停班停課
+
+115/07/11 (六) 本館休館一日
+明日 外展活動 • 楊梅故事園區、親子活動 奇異創作家 • 登登！星球任務站 #取消辦理
+圖書教玩具借閱服務暫停一次
+
+造成不便敬請見諒
+請親子們留意，不要白跑一趟喲!
+
+#颱風風雨大 #大家要乖乖待在家裡哦`,
+    link: "https://www.facebook.com/profile/61570213655087/search/?q=休館"
+  }
+];
 
 // DOM elements
 const settingsModal = document.getElementById('settingsModal');
@@ -140,6 +249,14 @@ const calendarClose = document.getElementById('calendarClose');
 const btnOpenCalendarModal = document.getElementById('btnOpenCalendarModal');
 const calendarBottomCard = document.getElementById('calendarBottomCard');
 const monthlyCalendarLink = document.getElementById('monthlyCalendarLink');
+
+// FB Closure Notice DOM elements
+const closureModal = document.getElementById('closureModal');
+const closureClose = document.getElementById('closureClose');
+const btnOpenClosureModal = document.getElementById('btnOpenClosureModal');
+const btnTopClosureNotice = document.getElementById('btnTopClosureNotice');
+const closurePostsPreviewList = document.getElementById('closurePostsPreviewList');
+const closureFullPostsList = document.getElementById('closureFullPostsList');
 
 
 
@@ -198,11 +315,36 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === calendarModal) closeCalendarModal();
     });
   }
+
+  // Closure Modal triggers
+  if (btnTopClosureNotice) {
+    btnTopClosureNotice.addEventListener('click', (e) => {
+      e.preventDefault();
+      openClosureModal();
+    });
+  }
+  if (btnOpenClosureModal) {
+    btnOpenClosureModal.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openClosureModal();
+    });
+  }
+  if (closureClose) {
+    closureClose.addEventListener('click', closeClosureModal);
+  }
+  if (closureModal) {
+    closureModal.addEventListener('click', (e) => {
+      if (e.target === closureModal) closeClosureModal();
+    });
+  }
   
   // Render views
   populateDistrictDropdown();
   renderProfileSummary();
   updateMonthlyCalendarLink();
+  
+  // Load & sync latest announcements (Calendar & FB Closure notices)
+  fetchLatestAnnouncements();
   
   // If the profile is fresh (names are empty), open settings automatically
   if (!currentProfile.parents.dadName && !currentProfile.parents.momName && !currentProfile.parents.grandpaName && !currentProfile.parents.grandmaName) {
@@ -210,11 +352,259 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Fetch latest announcements from data/announcements.json with cache fallback
+async function fetchLatestAnnouncements() {
+  // First, check if we have cached announcements in localStorage
+  let cachedData = null;
+  try {
+    const localSaved = localStorage.getItem('parenting_announcements');
+    if (localSaved) {
+      cachedData = JSON.parse(localSaved);
+      applyAnnouncementsData(cachedData);
+    } else {
+      // Use default bundled data
+      renderClosurePosts(FB_CLOSURE_POSTS);
+    }
+  } catch (err) {
+    renderClosurePosts(FB_CLOSURE_POSTS);
+  }
+
+  // Next, fetch the latest live JSON from GitHub with cache-busting timestamp
+  try {
+    const response = await fetch(`./data/announcements.json?t=${Date.now()}`);
+    if (response.ok) {
+      const liveData = await response.json();
+      localStorage.setItem('parenting_announcements', JSON.stringify(liveData));
+      applyAnnouncementsData(liveData);
+      console.log('[Live Sync] Successfully updated announcements from GitHub Actions feed:', liveData.updatedAt);
+    }
+  } catch (fetchErr) {
+    console.log('[Live Sync] Using offline cached announcements:', fetchErr);
+  }
+}
+
+// Apply announcements data to UI modals
+function applyAnnouncementsData(data) {
+  if (!data) return;
+
+  if (data.calendar) {
+    renderCalendarModal(data.calendar);
+  }
+  if (data.closures && Array.isArray(data.closures)) {
+    renderClosurePosts(data.closures);
+  }
+}
+
+// Render dynamic Calendar modal content
+function renderCalendarModal(calendarData) {
+  if (!calendarData) return;
+
+  const imagesContainer = document.getElementById('calendarImagesList');
+  const textBoxContainer = document.getElementById('calendarTextBox');
+  const textEl = document.getElementById('calendarLinkText');
+  const modalHeaderTitle = document.getElementById('calendarModalHeaderTitle');
+  const modalExtLink = document.getElementById('calendarModalExtLink');
+  const monthlyLink = document.getElementById('monthlyCalendarLink');
+
+  const bottomTitleEl = document.getElementById('bottomCalendarCardTitle');
+
+  if (textEl && calendarData.year && calendarData.month) {
+    textEl.textContent = `${calendarData.year}年${calendarData.month}月行事曆`;
+  }
+  if (bottomTitleEl && calendarData.year && calendarData.month) {
+    bottomTitleEl.textContent = `${calendarData.year}年${calendarData.month}月 活動行事曆`;
+  }
+  if (modalHeaderTitle && calendarData.title) {
+    modalHeaderTitle.textContent = `📅 ${calendarData.title}`;
+  }
+  if (modalExtLink && calendarData.searchUrl) {
+    modalExtLink.href = calendarData.searchUrl;
+  }
+  if (monthlyLink && calendarData.searchUrl) {
+    monthlyLink.href = calendarData.searchUrl;
+  }
+
+  // Render Calendar Images
+  if (imagesContainer && Array.isArray(calendarData.images) && calendarData.images.length > 0) {
+    imagesContainer.innerHTML = calendarData.images.map(img => `
+      <a href="${img.url}" target="_blank" rel="noopener noreferrer" class="calendar-img-link" title="點擊檢視高畫質大圖">
+        <img src="${img.url}" alt="${img.alt || '活動行事曆'}" class="calendar-full-img" loading="lazy">
+        <span class="img-zoom-tip">🔍 點擊開新分頁看原圖</span>
+      </a>
+    `).join('');
+  }
+
+  // Render Announcement Text Box
+  if (textBoxContainer) {
+    const activitiesHtml = Array.isArray(calendarData.activities) ? calendarData.activities.map(act => `
+      <li><span class="act-name">${act.name}</span><span class="act-age">${act.age}</span></li>
+    `).join('') : '';
+
+    const timeSlotsHtml = Array.isArray(calendarData.timeSlots) ? calendarData.timeSlots.map((ts, idx) => `
+      <div class="time-slot-card" style="${idx > 0 ? 'margin-top: 6px;' : ''}">
+        <strong>${ts.category === '自由入館遊憩' ? '🏡' : '🎨'} ${ts.category}</strong>（${ts.quota}）
+        ${ts.slots.map(s => `<div>▫️ ${s}</div>`).join('')}
+        ${ts.note ? `<small style="color: var(--text-muted);">${ts.note}</small>` : ''}
+      </div>
+    `).join('') : '';
+
+    const rulesHtml = Array.isArray(calendarData.rules) ? calendarData.rules.map(r => `
+      <li>${r}</li>
+    `).join('') : '';
+
+    textBoxContainer.innerHTML = `
+      <div class="calendar-announcement-card">
+        <h3 class="announcement-title">${calendarData.title}</h3>
+        <p class="announcement-greeting">${(calendarData.greeting || '').replace(/\n/g, '<br>')}</p>
+        
+        <div class="announcement-group">
+          <div class="group-title">👶 活動類型與參與年齡</div>
+          <ul class="activity-age-list">
+            ${activitiesHtml}
+          </ul>
+        </div>
+
+        <div class="announcement-group">
+          <div class="group-title">⏰ 入館與活動時段</div>
+          ${timeSlotsHtml}
+        </div>
+
+        <div class="announcement-group">
+          <div class="group-title">☄️ 報名方式與入館須知</div>
+          <ul class="rule-list">
+            ${rulesHtml}
+          </ul>
+          <div class="contact-phone-badge">
+            📞 洽詢電話：<a href="tel:${calendarData.phone || '034822207'}">${calendarData.phone || '03-482-2207'}</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Render Closure Posts on both Card and Modal
+function renderClosurePosts(postsList = FB_CLOSURE_POSTS) {
+  const currentList = Array.isArray(postsList) && postsList.length > 0 ? postsList : FB_CLOSURE_POSTS;
+
+  if (closurePostsPreviewList) {
+    closurePostsPreviewList.innerHTML = '';
+    currentList.forEach((post) => {
+      const item = document.createElement('div');
+      item.className = 'closure-post-item';
+      
+      const highlightsHtml = Array.isArray(post.highlights) ? post.highlights.map(h => `
+        <li class="closure-highlight-row">
+          <span class="bullet">▫️</span>
+          <span>${h}</span>
+        </li>
+      `).join('') : '';
+
+      item.innerHTML = `
+        <div class="closure-item-header">
+          <div class="closure-item-meta">
+            <span class="closure-badge ${post.badgeType}">${post.badgeText}</span>
+            <span class="closure-item-author">${post.author}</span>
+          </div>
+          <span class="closure-item-date">${post.date}</span>
+        </div>
+        <div class="closure-item-title">${post.title}</div>
+        <ul class="closure-highlights">
+          ${highlightsHtml}
+        </ul>
+        <div class="closure-card-actions">
+          <button type="button" class="btn-toggle-post-body" onclick="togglePostFullText('${post.id}', this)">
+            <span class="toggle-icon">🔽</span> 展開貼文全文
+          </button>
+        </div>
+        <div class="closure-post-fulltext" id="fullText_${post.id}">
+          ${post.fullContent}
+        </div>
+      `;
+      closurePostsPreviewList.appendChild(item);
+    });
+  }
+
+  if (closureFullPostsList) {
+    closureFullPostsList.innerHTML = '';
+    currentList.forEach((post) => {
+      const card = document.createElement('div');
+      card.className = 'closure-modal-post-card';
+      
+      card.innerHTML = `
+        <div class="closure-modal-post-header">
+          <div class="closure-item-meta">
+            <span class="closure-badge ${post.badgeType}">${post.badgeText}</span>
+            <span class="closure-item-author">${post.author} (${post.authorTag || '官方粉專'})</span>
+          </div>
+          <span class="closure-item-date">${post.date}</span>
+        </div>
+        <div class="closure-modal-post-title">${post.title}</div>
+        <div class="closure-modal-post-body">${post.fullContent}</div>
+      `;
+      closureFullPostsList.appendChild(card);
+    });
+  }
+}
+
+// Toggle inline post full text accordion
+window.togglePostFullText = function(postId, btnEl) {
+  const fullTextEl = document.getElementById(`fullText_${postId}`);
+  if (!fullTextEl) return;
+  
+  const isOpen = fullTextEl.classList.contains('open');
+  if (isOpen) {
+    fullTextEl.classList.remove('open');
+    if (btnEl) {
+      btnEl.innerHTML = '<span class="toggle-icon">🔽</span> 展開貼文全文';
+    }
+  } else {
+    fullTextEl.classList.add('open');
+    if (btnEl) {
+      btnEl.innerHTML = '<span class="toggle-icon">🔼</span> 收合貼文全文';
+    }
+  }
+};
+
+// Closure Modal open/close functions
+function openClosureModal() {
+  if (closureModal) {
+    closureModal.classList.add('open');
+  }
+}
+
+function closeClosureModal() {
+  if (closureModal) {
+    closureModal.classList.remove('open');
+  }
+}
+
 // Update dynamic monthly calendar link (Taoyuan Babycare Search)
-function updateMonthlyCalendarLink() {
-  const now = new Date();
-  const minguoYear = now.getFullYear() - 1911;
-  const month = now.getMonth() + 1;
+function updateMonthlyCalendarLink(calendarData) {
+  let minguoYear, month;
+  
+  if (calendarData && calendarData.year && calendarData.month) {
+    minguoYear = calendarData.year;
+    month = calendarData.month;
+  } else {
+    try {
+      const localSaved = localStorage.getItem('parenting_announcements');
+      if (localSaved) {
+        const parsed = JSON.parse(localSaved);
+        if (parsed.calendar && parsed.calendar.year && parsed.calendar.month) {
+          minguoYear = parsed.calendar.year;
+          month = parsed.calendar.month;
+        }
+      }
+    } catch (e) {}
+    
+    if (!month) {
+      const now = new Date();
+      minguoYear = now.getFullYear() - 1911;
+      month = now.getMonth() + 1;
+    }
+  }
+
   const keyword = `楊梅四維親子館 · ${minguoYear}年${month}月活動行事曆`;
   const url = `https://babycare.tycg.gov.tw//#/search?keyword=${encodeURIComponent(keyword)}`;
   
@@ -234,10 +624,12 @@ function updateMonthlyCalendarLink() {
     bottomTitleEl.textContent = `${minguoYear}年${month}月 活動行事曆`;
   }
   if (modalHeaderTitle) {
-    modalHeaderTitle.textContent = `📅 楊梅四維親子館 • ${minguoYear}年${month}月活動行事曆`;
+    modalHeaderTitle.textContent = (calendarData && calendarData.title) 
+      ? `📅 ${calendarData.title}` 
+      : `📅 楊梅四維親子館 • ${minguoYear}年${month}月活動行事曆`;
   }
   if (modalExtLink) {
-    modalExtLink.href = url;
+    modalExtLink.href = (calendarData && calendarData.searchUrl) ? calendarData.searchUrl : url;
   }
 }
 

@@ -55,16 +55,21 @@
         </div>
         <div class="notice-divider"></div>
         <div class="notice-links-row">
-          <a href="#" target="_blank" rel="noopener noreferrer" class="notice-news-link" id="monthlyCalendarLink">
+          <a href="#" class="notice-news-link" id="monthlyCalendarLink">
             <div class="notice-news-left">
               <span class="notice-icon">📅</span>
-              <span class="notice-news-title">最新消息</span>
+              <span class="notice-news-title">活動課表</span>
             </div>
             <span class="notice-link-btn">
-              <span id="calendarLinkText">本月活動行事曆</span> <span class="arrow">↗</span>
+              <span id="calendarLinkText">本月行事曆</span> <span class="arrow">↗</span>
             </span>
           </a>
-          <a href="https://www.facebook.com/ymswpcc/photos?locale=zh_TW" target="_blank" rel="noopener noreferrer" class="notice-fb-sublink" title="前往四維親子館 FB 粉專">
+          <button type="button" class="notice-closure-link" id="btnTopClosureNotice" title="查看最新 FB 休館公告">
+            <span class="notice-icon">📢</span>
+            <span class="notice-closure-text">休館公告</span>
+            <span class="notice-badge-num">3則</span>
+          </button>
+          <a href="https://www.facebook.com/profile/61570213655087/search/?q=休館" target="_blank" rel="noopener noreferrer" class="notice-fb-sublink" title="前往四維親子館 FB 官方搜尋頁">
             <span>FB</span> ↗
           </a>
         </div>
@@ -130,27 +135,57 @@
         </div>
       </section>
 
-      <!-- Bottom Section: Monthly Timetable & Notice Card (畫面置底) -->
-      <section class="card calendar-bottom-card" id="calendarBottomCard">
-        <div class="calendar-card-header">
-          <div class="calendar-card-title">
-            <span>📅</span> <span id="bottomCalendarCardTitle">本月活動行事曆</span>
+    </main>
+
+    <!-- Facebook Closure Notices In-App Modal (免跳轉休館彈窗) -->
+    <div class="modal-overlay" id="closureModal">
+      <div class="modal-content closure-modal-content">
+        
+        <div class="modal-header">
+          <div class="modal-header-left">
+            <span class="modal-header-icon">📢</span>
+            <h2>FB 休館與異動貼文 (前3筆)</h2>
           </div>
-          <button type="button" class="btn-open-calendar" id="btnOpenCalendarModal">
-            查看課表 🔍
-          </button>
+          <button type="button" class="btn-modal-close" id="closureClose">✕</button>
         </div>
-        <div class="calendar-card-preview-strip">
-          <div class="preview-thumb-wrap">
-            <img src="https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f873799c.jpg" alt="當月課表預覽" class="preview-thumb" id="previewThumbImg">
-            <div class="preview-badge-row">
-              <span class="preview-badge">✨ 免跳轉！點擊彈窗查看完整課表大圖與活動說明</span>
+        
+        <div class="closure-modal-scroll" id="closureModalScroll">
+          
+          <div class="closure-modal-banner">
+            <div class="closure-modal-banner-icon">✨</div>
+            <div class="closure-modal-banner-text">
+              <strong>免跳轉！直接在 PWA 瀏覽最新 3 筆 FB 官方休館貼文</strong>
+              <span>包含颱風天候異動、全館消毒清潔及各項活動因應規範</span>
             </div>
           </div>
-        </div>
-      </section>
 
-    </main>
+          <div class="closure-full-posts-list" id="closureFullPostsList">
+            <!-- Dynamically populated by app.js -->
+          </div>
+
+          <!-- Phone contact box -->
+          <div class="closure-phone-box">
+            <div class="phone-box-header">
+              <span class="phone-box-icon">📞</span>
+              <strong>臨時開館狀況諮詢專線</strong>
+            </div>
+            <p>如需進一步確認即時入館或課程預約狀況，可直接來電：</p>
+            <a href="tel:034822207" class="btn-direct-call">
+              📞 撥打楊梅四維親子館：(03) 482-2207
+            </a>
+          </div>
+
+          <!-- Bottom External Link -->
+          <div class="closure-modal-footer">
+            <a href="https://www.facebook.com/profile/61570213655087/search/?q=休館" target="_blank" rel="noopener noreferrer" class="btn-ext-closure" id="closureModalExtLink">
+              🌐 開啟 Facebook 原始搜尋貼文頁 ↗
+            </a>
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
 
     <!-- Monthly Calendar In-App Modal (免跳轉彈窗) -->
     <div class="modal-overlay" id="calendarModal">
@@ -169,12 +204,12 @@
               <span>🖼️</span> 活動課表大圖（可點擊放大瀏覽）
             </div>
             <div class="calendar-images-list" id="calendarImagesList">
-              <a href="https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f873799c.jpg" target="_blank" rel="noopener noreferrer" class="calendar-img-link" title="點擊檢視高畫質大圖">
-                <img src="https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f873799c.jpg" alt="8月份活動行事曆 (課表 1)" class="calendar-full-img" loading="lazy">
+              <a href="https://babycarems.tycg.gov.tw/files/PC/NEWS/d2098d98-2bb4-4a1a-b6be-c1e0f45530f3/56ca0e25.jpg" target="_blank" rel="noopener noreferrer" class="calendar-img-link" title="點擊檢視高畫質大圖">
+                <img src="https://babycarems.tycg.gov.tw/files/PC/NEWS/d2098d98-2bb4-4a1a-b6be-c1e0f45530f3/56ca0e25.jpg" alt="9月份活動行事曆 (課表 1)" class="calendar-full-img" loading="lazy">
                 <span class="img-zoom-tip">🔍 點擊開新分頁看原圖</span>
               </a>
-              <a href="https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f86eaaba.jpg" target="_blank" rel="noopener noreferrer" class="calendar-img-link" title="點擊檢視高畫質大圖">
-                <img src="https://babycarems.tycg.gov.tw/files/PC/NEWS/90b3bcb7-6234-48d7-a078-9e07e8ade1dc/f86eaaba.jpg" alt="8月份活動行事曆 (課表 2)" class="calendar-full-img" loading="lazy">
+              <a href="https://babycarems.tycg.gov.tw/files/PC/NEWS/d2098d98-2bb4-4a1a-b6be-c1e0f45530f3/100dd33f.jpg" target="_blank" rel="noopener noreferrer" class="calendar-img-link" title="點擊檢視高畫質大圖">
+                <img src="https://babycarems.tycg.gov.tw/files/PC/NEWS/d2098d98-2bb4-4a1a-b6be-c1e0f45530f3/100dd33f.jpg" alt="9月份活動行事曆 (課表 2)" class="calendar-full-img" loading="lazy">
                 <span class="img-zoom-tip">🔍 點擊開新分頁看原圖</span>
               </a>
             </div>
@@ -188,8 +223,8 @@
             <div class="calendar-text-box" id="calendarTextBox">
               <!-- Dynamically populated or default formatted content -->
               <div class="calendar-announcement-card">
-                <h3 class="announcement-title">楊梅四維親子館 • 115年8月份活動行事曆 ☄️📅</h3>
-                <p class="announcement-greeting">各位大朋友、小朋友們好 ! 👋🏻<br>四維親子館 8 月份活動行事曆出爐囉 ! 歡迎各位家長帶著寶貝一同入館遊憩、參與活動 🥳</p>
+                <h3 class="announcement-title">楊梅四維親子館 · 115年9月活動行事曆 ☄️📅</h3>
+                <p class="announcement-greeting">各位大朋友、小朋友們好 ! 👋🏻<br>四維親子館 9 月份活動行事曆出爐囉 ! 歡迎各位家長帶著寶貝一同入館遊憩、參與活動 🥳</p>
                 
                 <div class="announcement-group">
                   <div class="group-title">👶 活動類型與參與年齡</div>
@@ -241,7 +276,7 @@
 
           <!-- Bottom External Link -->
           <div class="calendar-modal-footer">
-            <a href="https://babycare.tycg.gov.tw//#/search?keyword=楊梅四維親子館%20·%20115年8月活動行事曆" target="_blank" rel="noopener noreferrer" class="btn-ext-calendar" id="calendarModalExtLink">
+            <a href="https://babycare.tycg.gov.tw//#/search?keyword=楊梅四維親子館%20·%20115年9月活動行事曆" target="_blank" rel="noopener noreferrer" class="btn-ext-calendar" id="calendarModalExtLink">
               🌐 開啟桃園育兒資源網官方搜尋頁 ↗
             </a>
           </div>
