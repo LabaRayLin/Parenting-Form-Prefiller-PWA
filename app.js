@@ -2,6 +2,7 @@
 const FORM_BASE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSergjQh4HM1lwohyMpl_Sn2g5MiLCW-pFZEtGNuHKVEnIsvjg/viewform";
 
 const ENTRIES = {
+  photoConsent: "entry.1887922972",       // Photo consent
   firstTime: "entry.1312759299",          // 是, 否
   parentName: "entry.786917290",         // Text
   parentPhone: "entry.956896327",        // Text
@@ -1048,6 +1049,7 @@ window.runGrandBothScenario = function() {
 // Common fields pre-fill builder
 function getCommonPrefills() {
   const fields = {};
+  fields[ENTRIES.photoConsent] = "同意";
   fields[ENTRIES.firstTime] = currentProfile.firstTime;
   fields[ENTRIES.district] = currentProfile.address.district;
   if (currentProfile.address.district === '楊梅區' && currentProfile.address.village) {
