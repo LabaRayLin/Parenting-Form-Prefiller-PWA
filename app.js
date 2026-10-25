@@ -127,111 +127,9 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Facebook Closure Posts Dataset (Top 3 Posts from FB Search)
-const FB_CLOSURE_POSTS = [
-  {
-    id: "post_1",
-    author: "台灣玩具圖書館",
-    authorTag: "營運總部 / 四維等據點",
-    date: "07/11 (六)",
-    badgeType: "typhoon",
-    badgeText: "🌀 颱風停班課休館",
-    title: "【 🌀 巴威颱風來襲休館公告 】",
-    highlights: [
-      "因應 07/11 桃園市停班停課一天，全館臨時休館 1 天",
-      "風強雨大在家防颱，捐玩具、做志工與入館遊憩先緩緩",
-      "楊梅四維親子館、平鎮親子館、桃園物流中心等據點同步暫停服務"
-    ],
-    fullContent: `【 🌀 巴威颱風來襲休館公告 】
-展開內文看更多 #玩圖據點資訊
+// No bundled FB posts: only display notices from a verified sync.
+const FB_CLOSURE_POSTS = [];
 
-因應 07/11 桃園市停班停課一天
-桃園總部物流中心將臨時休館 1 天
-風強雨大 我們在家好好防颱
-捐玩具、做志工都先緩緩喔～
-
-若有捐贈、志工、合作等相關問題
-歡迎善加利用我們的 FB / email 詢問
-我們將於上班日盡快回覆
-感謝大家的體諒！
-
-#服務時間異動：
-桃園總部物流中心 (桃園市楊梅區中興路133號) 07/11 (六) 休館
-
-| 查詢全台各館舍休館時間 |
-北部：
-<桃園>
-桃園總部物流中心 @台灣玩具圖書館
-共享園區實驗據點 玩具藏寶箱/玩具盒子修惜站
-平鎮親子館
-楊梅四維親子館
-復興行動親子車
-<雙北>
-新北市玩具銀行
-臺北玩具轉運站
-
-中部：
-<台中> 臺中市大雅國小玩具圖書館
-<彰化> Formosa玩具基地
-
-南部：
-台灣玩具圖書館-高雄玩具碼頭
-
-東部：
-玩具圖書館-花蓮東華玩具樂園物流中心`,
-    link: "https://www.facebook.com/profile/61570213655087/search/?q=休館"
-  },
-  {
-    id: "post_2",
-    author: "楊梅四維親子館",
-    authorTag: "官方粉專",
-    date: "07/28 (二) - 07/29 (三)",
-    badgeType: "disinfect",
-    badgeText: "🧴 消毒日休館",
-    title: "【楊梅四維親子館 • 7月份休館公告】",
-    highlights: [
-      "07/28 (二) 至 07/29 (三) 全日進行環境深度清潔消毒作業",
-      "消毒期間暫停開放入館與各項親子課程，請家長留意避免白跑",
-      "如有入館疑問請洽詢楊梅四維親子館專線：03-4822207"
-    ],
-    fullContent: `【楊梅四維親子館 • 7月份休館公告】
-
-07/28 (二) - 07/29 (三) 消毒日休館
-
-煩請家長留意，不要白跑一趟囉!
-造成不便敬請見諒
-如有疑問請洽楊梅四維親子館 03-4822207`,
-    link: "https://www.facebook.com/profile/61570213655087/search/?q=休館"
-  },
-  {
-    id: "post_3",
-    author: "楊梅四維親子館",
-    authorTag: "官方粉專",
-    date: "115/07/11 (六)",
-    badgeType: "special",
-    badgeText: "⚠️ 臨時休館與活動取消",
-    title: "【楊梅四維親子館 • 臨時休館公告】",
-    highlights: [
-      "因巴威颱風來襲市府發佈停班停課，115/07/11 (六) 本館休館一日",
-      "外展活動（楊梅故事園區）、奇異創作家（登登！星球任務站）取消辦理",
-      "圖書教玩具借閱服務暫停一次，颱風天請家長幼兒安心待在家防颱"
-    ],
-    fullContent: `【楊梅四維親子館 • 臨時休館公告】
-
-因巴威颱風來襲
-桃園市政府發佈停班停課
-
-115/07/11 (六) 本館休館一日
-明日 外展活動 • 楊梅故事園區、親子活動 奇異創作家 • 登登！星球任務站 #取消辦理
-圖書教玩具借閱服務暫停一次
-
-造成不便敬請見諒
-請親子們留意，不要白跑一趟喲!
-
-#颱風風雨大 #大家要乖乖待在家裡哦`,
-    link: "https://www.facebook.com/profile/61570213655087/search/?q=休館"
-  }
-];
 
 // DOM elements
 const settingsModal = document.getElementById('settingsModal');
@@ -370,13 +268,13 @@ async function fetchLatestAnnouncements() {
     renderClosurePosts(FB_CLOSURE_POSTS);
   }
 
-  // Next, fetch the latest live JSON from GitHub with cache-busting timestamp
+  // Fetch fresh data using a stable URL so offline service-worker fallback works.
   try {
-    const response = await fetch(`./data/announcements.json?t=${Date.now()}`);
+    const response = await fetch('./data/announcements.json', { cache: 'no-store' });
     if (response.ok) {
       const liveData = await response.json();
-      localStorage.setItem('parenting_announcements', JSON.stringify(liveData));
       applyAnnouncementsData(liveData);
+      try { localStorage.setItem('parenting_announcements', JSON.stringify(liveData)); } catch (err) { /* Storage may be unavailable. */ }
       console.log('[Live Sync] Successfully updated announcements from GitHub Actions feed:', liveData.updatedAt);
     }
   } catch (fetchErr) {
@@ -391,8 +289,15 @@ function applyAnnouncementsData(data) {
   if (data.calendar) {
     renderCalendarModal(data.calendar);
   }
-  if (data.closures && Array.isArray(data.closures)) {
-    renderClosurePosts(data.closures);
+  const sync = data.closureSync;
+  const verified = sync && sync.lastSuccessAt;
+  renderClosurePosts(verified && Array.isArray(data.closures) ? data.closures : []);
+  const status = document.getElementById('closureSyncStatus');
+  if (status) {
+    const last = verified ? new Date(sync.lastSuccessAt).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }) : '';
+    status.textContent = verified
+      ? (sync.status === 'ok' ? '最近成功同步：' : '目前無法更新，顯示上次同步資料：') + last + '。即時異動請以官方 FB 為準。'
+      : '尚未取得可驗證的 FB 公告，請開啟官方 FB 查看最新休館消息。';
   }
 }
 
@@ -486,7 +391,14 @@ function renderCalendarModal(calendarData) {
 
 // Render Closure Posts on both Card and Modal
 function renderClosurePosts(postsList = FB_CLOSURE_POSTS) {
-  const currentList = Array.isArray(postsList) && postsList.length > 0 ? postsList : FB_CLOSURE_POSTS;
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const currentList = (Array.isArray(postsList) ? postsList : []).slice(0, 3).map(post => ({
+    ...Object.fromEntries(Object.entries(post).map(([key, value]) => [key, typeof value === 'string' ? escapeHtml(value) : value])),
+    id: String(post.id || '').replace(/[^a-zA-Z0-9_-]/g, ''),
+    badgeType: ['typhoon', 'disinfect', 'notice'].includes(post.badgeType) ? post.badgeType : 'notice',
+    highlights: Array.isArray(post.highlights) ? post.highlights.map(escapeHtml) : [],
+    link: /^https:\/\/(www\.)?facebook\.com\//.test(post.link || '') ? escapeHtml(post.link) : ''
+  }));
 
   if (closurePostsPreviewList) {
     closurePostsPreviewList.innerHTML = '';
@@ -527,7 +439,7 @@ function renderClosurePosts(postsList = FB_CLOSURE_POSTS) {
   }
 
   if (closureFullPostsList) {
-    closureFullPostsList.innerHTML = '';
+    closureFullPostsList.innerHTML = currentList.length ? '' : '<p class="closure-modal-post-body">目前沒有可顯示的已同步休館公告，請查看官方 FB 最新消息。</p>';
     currentList.forEach((post) => {
       const card = document.createElement('div');
       card.className = 'closure-modal-post-card';
@@ -542,6 +454,7 @@ function renderClosurePosts(postsList = FB_CLOSURE_POSTS) {
         </div>
         <div class="closure-modal-post-title">${post.title}</div>
         <div class="closure-modal-post-body">${post.fullContent}</div>
+        ${post.link ? `<a href="${post.link}" target="_blank" rel="noopener noreferrer">查看 FB 原始貼文 ↗</a>` : ''}
       `;
       closureFullPostsList.appendChild(card);
     });
@@ -569,6 +482,7 @@ window.togglePostFullText = function(postId, btnEl) {
 
 // Closure Modal open/close functions
 function openClosureModal() {
+  fetchLatestAnnouncements();
   if (closureModal) {
     closureModal.classList.add('open');
   }

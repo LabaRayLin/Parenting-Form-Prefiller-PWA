@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Daily Announcement & Closure Updater for Parenting-Form-Prefiller-PWA
-Runs daily at 08:00 (UTC 00:00) via GitHub Actions to fetch the latest
+Hourly Announcement & Closure Updater for Parenting-Form-Prefiller-PWA
+Runs hourly on the hour via GitHub Actions to fetch the latest
 Monthly Calendar from Taoyuan Babycare and the Top 3 Facebook Closure Notices.
 """
 
@@ -240,68 +240,81 @@ def fetch_monthly_calendar(minguo_year, month, existing_calendar):
     return calendar_data
 
 
-def fetch_fb_closure_notices(existing_closures):
-    """
-    Fetch and structure top 3 closure announcements from FB page.
-    """
-    # If network fetch from FB is available, update; otherwise preserve curated structure with latest dates
-    default_closures = [
-        {
-            "id": "post_1",
-            "author": "台灣玩具圖書館",
-            "authorTag": "營運總部 / 四維等據點",
-            "date": "07/11 (六)",
-            "badgeType": "typhoon",
-            "badgeText": "🌀 颱風停班課休館",
-            "title": "【 🌀 巴威颱風來襲休館公告 】",
-            "highlights": [
-                "因應 07/11 桃園市停班停課一天，全館臨時休館 1 天",
-                "風強雨大在家防颱，捐玩具、做志工與入館遊憩先緩緩",
-                "楊梅四維親子館、平鎮親子館、桃園物流中心等據點同步暫停服務"
-            ],
-            "fullContent": "【 🌀 巴威颱風來襲休館公告 】\n展開內文看更多 #玩圖據點資訊\n\n因應 07/11 桃園市停班停課一天\n桃園總部物流中心將臨時休館 1 天\n風強雨大 我們在家好好防颱\n捐玩具、做志工都先緩緩喔～\n\n若有捐贈、志工、合作等相關問題\n歡迎善加利用我們的 FB / email 詢問\n我們將於上班日盡快回覆\n感謝大家的體諒！\n\n#服務時間異動：\n桃園總部物流中心 (桃園市楊梅區中興路133號) 07/11 (六) 休館\n\n| 查詢全台各館舍休館時間 |\n北部：\n<桃園>\n桃園總部物流中心 @台灣玩具圖書館\n共享園區實驗據點 玩具藏寶箱/玩具盒子修惜站\n平鎮親子館\n楊梅四維親子館\n復興行動親子車\n<雙北>\n新北市玩具銀行\n臺北玩具轉運站\n\n中部：\n<台中> 臺中市大雅國小玩具圖書館\n<彰化> Formosa玩具基地\n\n南部：\n台灣玩具圖書館-高雄玩具碼頭\n\n東部：\n玩具圖書館-花蓮東華玩具樂園物流中心",
-            "link": "https://www.facebook.com/profile/61570213655087/search/?q=休館"
-        },
-        {
-            "id": "post_2",
-            "author": "楊梅四維親子館",
-            "authorTag": "官方粉專",
-            "date": "07/28 (二) - 07/29 (三)",
-            "badgeType": "disinfect",
-            "badgeText": "🧴 消毒日休館",
-            "title": "【楊梅四維親子館 • 7月份休館公告】",
-            "highlights": [
-                "07/28 (二) 至 07/29 (三) 全日進行環境深度清潔消毒作業",
-                "消毒期間暫停開放入館與各項親子課程，請家長留意避免白跑",
-                "如有入館疑問請洽詢楊梅四維親子館專線：03-4822207"
-            ],
-            "fullContent": "【楊梅四維親子館 • 7月份休館公告】\n\n07/28 (二) - 07/29 (三) 消毒日休館\n\n煩請家長留意，不要白跑一趟囉!\n造成不便敬請見諒\n如有疑問請洽楊梅四維親子館 03-4822207",
-            "link": "https://www.facebook.com/profile/61570213655087/search/?q=休館"
-        },
-        {
-            "id": "post_3",
-            "author": "楊梅四維親子館",
-            "authorTag": "官方粉專",
-            "date": "115/07/11 (六)",
-            "badgeType": "special",
-            "badgeText": "⚠️ 臨時休館與活動取消",
-            "title": "【楊梅四維親子館 • 臨時休館公告】",
-            "highlights": [
-                "因巴威颱風來襲市府發佈停班停課，115/07/11 (六) 本館休館一日",
-                "外展活動（楊梅故事園區）、奇異創作家（登登！星球任務站）取消辦理",
-                "圖書教玩具借閱服務暫停一次，颱風天請家長幼兒安心待在家防颱"
-            ],
-            "fullContent": "【楊梅四維親子館 • 臨時休館公告】\n\n因巴威颱風來襲\n桃園市政府發佈停班停課\n\n115/07/11 (六) 本館休館一日\n明日 外展活動 • 楊梅故事園區、親子活動 奇異創作家 • 登登！星球任務站 #取消辦理\n圖書教玩具借閱服務暫停一次\n\n造成不便敬請見諒\n請親子們留意，不要白跑一趟喲!\n\n#颱風風雨大 #大家要乖乖待在家裡哦",
-            "link": "https://www.facebook.com/profile/61570213655087/search/?q=休館"
-        }
-    ]
+FB_PAGE_ID = "61570213655087"
 
-    return existing_closures if existing_closures and len(existing_closures) >= 3 else default_closures
+
+def fetch_fb_closure_notices(existing_closures, previous_sync=None):
+    """Read published posts; never manufacture notices or advance success on failure."""
+    previous_sync = previous_sync or {}
+    checked_at = datetime.now(TZ_TAIPEI).isoformat()
+    # Only retain data previously obtained through this verified pipeline.
+    saved = existing_closures if previous_sync.get("lastSuccessAt") else []
+    status = {
+        "status": "unconfigured", "checkedAt": checked_at,
+        "lastSuccessAt": previous_sync.get("lastSuccessAt"),
+        "pageUrl": f"https://www.facebook.com/{FB_PAGE_ID}",
+    }
+    token = os.environ.get("FB_PAGE_ACCESS_TOKEN", "").strip()
+    if not token:
+        try:
+            from public_fb import fetch_public_notices
+            notices = fetch_public_notices()
+            status.update(status="ok", lastSuccessAt=checked_at, source="public-page")
+            return notices, status
+        except Exception as exc:
+            print(f"[Warning] Public FB sync unavailable ({type(exc).__name__}); preserving verified data")
+            status["status"] = "error"
+            return saved, status
+    try:
+        version = os.environ.get("FB_GRAPH_API_VERSION", "v22.0")
+        if not re.fullmatch(r"v\d+\.\d+", version):
+            raise ValueError("Invalid Graph API version")
+        params = {"fields": "id,message,created_time,permalink_url", "limit": 100}
+        url = f"https://graph.facebook.com/{version}/{FB_PAGE_ID}/posts?" + urllib.parse.urlencode(params)
+        posts = {}
+        # Follow pagination via cursors without logging URLs containing credentials.
+        for _ in range(10):
+            req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+            with urllib.request.urlopen(req, timeout=30) as response:
+                payload = json.load(response)
+            if "error" in payload or not isinstance(payload.get("data"), list):
+                raise ValueError("Invalid Facebook response")
+            for post in payload["data"]:
+                message = post.get("message", "").strip()
+                if not message or not re.search(r"休館|閉館|暫停服務|停班停課|取消辦理|服務時間異動", message):
+                    continue
+                published = datetime.fromisoformat(post["created_time"].replace("Z", "+00:00"))
+                link = post.get("permalink_url", "")
+                parsed = urllib.parse.urlparse(link)
+                if parsed.scheme != "https" or parsed.hostname not in ("www.facebook.com", "facebook.com"):
+                    continue
+                lines = [line.strip() for line in message.splitlines() if line.strip()]
+                posts[post["id"]] = {
+                    "id": post["id"], "author": "楊梅四維親子館", "authorTag": "官方粉專",
+                    "date": published.astimezone(TZ_TAIPEI).strftime("%Y/%m/%d"),
+                    "publishedAt": published.isoformat(), "badgeType": "notice",
+                    "badgeText": "📢 休館與服務異動", "title": lines[0],
+                    "highlights": lines[1:4], "fullContent": message, "link": link,
+                }
+            paging = payload.get("paging", {})
+            after = paging.get("cursors", {}).get("after")
+            if not paging.get("next") or not after:
+                break
+            params["after"] = after
+            url = f"https://graph.facebook.com/{version}/{FB_PAGE_ID}/posts?" + urllib.parse.urlencode(params)
+        notices = sorted(posts.values(), key=lambda post: post["publishedAt"], reverse=True)[:3]
+        status.update(status="ok", lastSuccessAt=checked_at)
+        return notices, status
+    except Exception:
+        # Exception URLs or response bodies can contain the access token.
+        print("[Warning] Facebook sync failed; check token, permissions and API availability")
+        status["status"] = "error"
+        return saved, status
 
 
 def main():
     print("========================================")
-    print("🚀 Starting Daily Announcement Sync Task")
+    print("🚀 Starting Hourly Announcement Sync Task")
     print("========================================")
 
     minguo_year, month, now = get_current_minguo_date()
@@ -313,13 +326,14 @@ def main():
 
     # Fetch Calendar & Closures
     calendar_data = fetch_monthly_calendar(minguo_year, month, existing_calendar)
-    closures_data = fetch_fb_closure_notices(existing_closures)
+    closures_data, closure_sync = fetch_fb_closure_notices(existing_closures, existing_data.get("closureSync"))
 
     # Build updated JSON payload
     updated_payload = {
         "updatedAt": now.isoformat(),
         "calendar": calendar_data,
-        "closures": closures_data
+        "closures": closures_data,
+        "closureSync": closure_sync
     }
 
     # Ensure data directory exists

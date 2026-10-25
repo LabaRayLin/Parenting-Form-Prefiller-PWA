@@ -1,4 +1,4 @@
-const CACHE_NAME = 'parenting-prefiller-v19';
+const CACHE_NAME = 'parenting-prefiller-v20';
 const ASSETS = [
   './',
   './index.html',
@@ -36,6 +36,7 @@ self.addEventListener('activate', (e) => {
 // Network-First strategy: Fetch freshest version online, fallback to cache when offline
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
+  if (new URL(e.request.url).origin !== self.location.origin) return;
   
   e.respondWith(
     fetch(e.request)
