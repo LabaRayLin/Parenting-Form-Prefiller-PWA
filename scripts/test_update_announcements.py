@@ -11,6 +11,31 @@ updater = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(updater)
 
 
+class CalendarTests(unittest.TestCase):
+    def test_select_current_year_and_month_instead_of_first_calendar(self):
+        def item(year, month):
+            return {'info_title': f'楊梅四維親子館 {year}年{month}月活動行事曆',
+                    'info_cont': '&lt;img src=&quot;https://babycarems.tycg.gov.tw/files/PC/NEWS/example/calendar.jpg&quot;&gt;'}
+        payload = {'data': {'list': [item(115, 11), item(114, 10), item(115, 10)]}}
+        with patch.object(updater.urllib.request, 'urlopen', return_value=io.BytesIO(json.dumps(payload).encode())):
+            calendar = updater.fetch_monthly_calendar_from_api(115, 10)
+        self.assertEqual((calendar['year'], calendar['month']), (115, 10))
+        self.assertEqual(len(calendar['images']), 1)
+
+    def test_failure_never_relabels_previous_month_images(self):
+        previous = {'year': 115, 'month': 9, 'images': [{'url': 'september.jpg'}]}
+        with patch.object(updater, 'fetch_monthly_calendar_from_api', return_value=None):
+            calendar = updater.fetch_monthly_calendar(115, 10, previous)
+        self.assertEqual(calendar['month'], 10)
+        self.assertEqual(calendar['images'], [])
+        self.assertIn('尚未同步成功', calendar['greeting'])
+
+    def test_missing_current_month_does_not_select_next_month(self):
+        payload = {'data': {'list': [{'info_title': '楊梅四維親子館 115年11月活動行事曆', 'pic_loc': 'november.jpg'}]}}
+        with patch.object(updater.urllib.request, 'urlopen', return_value=io.BytesIO(json.dumps(payload).encode())):
+            self.assertIsNone(updater.fetch_monthly_calendar_from_api(115, 10))
+
+
 class FacebookSyncTests(unittest.TestCase):
     def test_missing_token_discards_unverified_legacy_posts(self):
         with patch.dict(os.environ, {'FB_PAGE_ACCESS_TOKEN': ''}), patch.dict('sys.modules', {'public_fb': Mock(fetch_public_notices=Mock(side_effect=RuntimeError('unavailable')))}):

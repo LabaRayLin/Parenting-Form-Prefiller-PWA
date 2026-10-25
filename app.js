@@ -331,7 +331,7 @@ function renderCalendarModal(calendarData) {
   }
 
   // Render Calendar Images
-  if (imagesContainer && Array.isArray(calendarData.images) && calendarData.images.length > 0) {
+  if (imagesContainer && Array.isArray(calendarData.images)) {
     imagesContainer.innerHTML = calendarData.images.map(img => `
       <a href="${img.url}" target="_blank" rel="noopener noreferrer" class="calendar-img-link" title="點擊檢視高畫質大圖">
         <img src="${img.url}" alt="${img.alt || '活動行事曆'}" class="calendar-full-img" loading="lazy">

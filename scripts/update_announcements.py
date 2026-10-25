@@ -6,6 +6,7 @@ Runs hourly on the hour via GitHub Actions to fetch the latest
 Monthly Calendar from Taoyuan Babycare and the Top 3 Facebook Closure Notices.
 """
 
+import html
 import json
 import os
 import re
@@ -60,23 +61,18 @@ def fetch_monthly_calendar_from_api(minguo_year, month):
             data = json.loads(resp.read().decode("utf-8"))
             items = data.get("data", {}).get("list", [])
             
-            month_str = f"{month}月"
-            
             target_item = None
             for item in items:
                 title = item.get("info_title", "")
-                if "活動行事曆" in title and (month_str in title or f"{month}月份" in title):
-                    target_item = item
-                    break
-            
-            # If current month not matched, try any recent calendar item
-            if not target_item:
-                for item in items:
-                    title = item.get("info_title", "")
-                    if "活動行事曆" in title:
+                date_match = re.search(r"(\d+)\s*年\s*(\d+)\s*月", title)
+                if "楊梅四維親子館" in title and "活動行事曆" in title and date_match:
+                    year_value, month_value = map(int, date_match.groups())
+                    if year_value >= 1911:
+                        year_value -= 1911
+                    if (year_value, month_value) == (minguo_year, month):
                         target_item = item
                         break
-                        
+
             if target_item:
                 raw_title = target_item.get("info_title", "")
                 
@@ -88,7 +84,7 @@ def fetch_monthly_calendar_from_api(minguo_year, month):
                 actual_year = int(m_year.group(1)) if m_year else minguo_year
                 
                 title = raw_title if raw_title else f"楊梅四維親子館 • {actual_year}年{actual_month}月份活動行事曆 ☄️📅"
-                cont_str = target_item.get("info_cont", "")
+                cont_str = html.unescape(target_item.get("info_cont", ""))
                 
                 # Extract image URLs from cont_str
                 found_images = re.findall(
@@ -176,68 +172,15 @@ def fetch_monthly_calendar(minguo_year, month, existing_calendar):
     if live_calendar:
         return live_calendar
     
-    print("[*] Using fallback calendar data")
-    keyword = f"楊梅四維親子館 · {minguo_year}年{month}月活動行事曆"
-    search_url = f"https://babycare.tycg.gov.tw//#/search?keyword={urllib.parse.quote(keyword)}"
-    
-    # Fallback to existing calendar, but only keep current month if existing calendar matches
-    default_images = [
-        {
-            "url": "https://babycarems.tycg.gov.tw/files/PC/NEWS/d2098d98-2bb4-4a1a-b6be-c1e0f45530f3/56ca0e25.jpg",
-            "alt": f"{month}月份活動行事曆 (課表 1)"
-        },
-        {
-            "url": "https://babycarems.tycg.gov.tw/files/PC/NEWS/d2098d98-2bb4-4a1a-b6be-c1e0f45530f3/100dd33f.jpg",
-            "alt": f"{month}月份活動行事曆 (課表 2)"
-        }
-    ]
-    
-    calendar_images = existing_calendar.get("images", default_images)
-    # Ensure images have correct month alt
-    if existing_calendar.get("month") != month:
-        calendar_images = default_images
-    
-    calendar_data = {
-        "title": f"楊梅四維親子館 • {minguo_year}年{month}月份活動行事曆 ☄️📅",
-        "year": minguo_year,
-        "month": month,
-        "greeting": f"各位大朋友、小朋友們好 ! 👋🏻\n四維親子館 {month} 月份活動行事曆出爐囉 ! 歡迎各位家長帶著寶貝一同入館遊憩、參與活動 🥳",
-        "images": calendar_images,
-        "activities": [
-            { "name": "奇幻探索屋", "age": "4m - 12m" },
-            { "name": "小手繪宇宙", "age": "1y0m - 2y0m" },
-            { "name": "繪本星球", "age": "2y0m - 學齡前" },
-            { "name": "奇異創作家", "age": "2y0m - 學齡前" },
-            { "name": "黑魔法廚房", "age": "2y0m - 學齡前" },
-            { "name": "舞動小精靈", "age": "0y - 學齡前" },
-            { "name": "外展活動", "age": "0y - 學齡前" },
-            { "name": "親子活動", "age": "依活動類型而定" }
-        ],
-        "timeSlots": [
-            {
-                "category": "自由入館遊憩",
-                "quota": "網路 25 組、現場 10 組，開館 15 分鐘內報到",
-                "slots": ["上午：09:00 - 12:00", "下午：14:00 - 17:00"]
-            },
-            {
-                "category": "親子活動",
-                "quota": "網路 4 組、現場 2 組，活動前 15 分鐘報到",
-                "slots": ["上午：10:00 - 10:30", "下午：15:00 - 15:30"],
-                "note": "💡 舞動小精靈採全現場報名"
-            }
-        ],
-        "rules": [
-            "網路預約：活動前 14 天開放預約（至桃園育兒資源網）。",
-            "現場名額：活動當日該場次現場開放排隊報名。",
-            "對象：0-6 歲學齡前幼兒（未上小學），需家長陪同，無托育服務。",
-            "服裝：成人請穿著襪子入場，幼兒可穿可不穿。",
-            "取消與記點：如需取消請提早上網或來電；預約逾時未到將記「無故未到」一次並視同放棄。",
-            "飲食：館內禁止飲食，飲水請自備水杯。"
-        ],
-        "phone": "03-482-2207",
-        "searchUrl": search_url
+    # Never relabel old calendar images as the current month.
+    if existing_calendar.get("year") == minguo_year and existing_calendar.get("month") == month:
+        return existing_calendar
+    keyword = f"楊梅四維親子館 {minguo_year}年{month}月活動行事曆"
+    return {
+        "year": minguo_year, "month": month,
+        "title": keyword, "greeting": "本月行事曆尚未同步成功，請查看官方網站。",
+        "images": [], "searchUrl": "https://babycare.tycg.gov.tw/#/search?keyword=" + urllib.parse.quote(keyword)
     }
-    return calendar_data
 
 
 FB_PAGE_ID = "61570213655087"
