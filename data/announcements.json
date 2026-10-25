@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-05T13:55:04.792135+08:00",
+  "updatedAt": "2026-10-25T16:19:38.903888+08:00",
   "calendar": {
     "title": "楊梅四維親子館 · 115年10月活動行事曆 ☄️📅",
     "year": 115,
@@ -130,10 +130,9 @@
     }
   ],
   "closureSync": {
-    "status": "ok",
+    "status": "error",
+    "checkedAt": "2026-10-25T16:19:40.035562+08:00",
     "lastSuccessAt": "2026-10-25T10:42:16.948759+08:00",
-    "checkedAt": "2026-10-25T10:42:16.948759+08:00",
-    "source": "public-page",
-    "pageUrl": "https://www.facebook.com/ymswpcc/"
+    "pageUrl": "https://www.facebook.com/61570213655087"
   }
 }
