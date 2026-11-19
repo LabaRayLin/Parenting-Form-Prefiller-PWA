@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-19T05:47:27.382433+08:00",
+  "updatedAt": "2026-11-19T11:08:39.825090+08:00",
   "calendar": {
     "title": "楊梅四維親子館 · 115年11月活動行事曆 ☄️📅",
     "year": 115,
@@ -98,10 +98,9 @@
     }
   ],
   "closureSync": {
-    "status": "ok",
-    "checkedAt": "2026-11-19T05:47:28.635865+08:00",
+    "status": "error",
+    "checkedAt": "2026-11-19T11:08:42.386310+08:00",
     "lastSuccessAt": "2026-11-19T05:47:28.635865+08:00",
-    "pageUrl": "https://www.facebook.com/61570213655087",
-    "source": "public-page"
+    "pageUrl": "https://www.facebook.com/61570213655087"
   }
 }
